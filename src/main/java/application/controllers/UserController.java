@@ -24,6 +24,18 @@ public class UserController {
         return ResponseEntity.ok(new SuccessResponse("Successfully registered user"));
     }
 
+
+    @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
+    public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
+        User user = UserService.getUserByLogin(credentials.getLogin());
+        if (user == null || !user.getPassword().equals(credentials.getPassword())) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Authorisation fail."));
+        }
+        httpSession.setAttribute("userID", user.getId());
+        return ResponseEntity.ok(new SuccessResponse("Successfully signin"));
+    }
+
+
     @RequestMapping(path = "/my", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity currentUser(HttpSession httpSession) {
         Integer userId = (Integer) httpSession.getAttribute("userId");

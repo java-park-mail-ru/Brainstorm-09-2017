@@ -9,7 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class User {
-    String login;
+    private Integer id;
+    private String login;
     private String password;
     private String email;
 
@@ -32,9 +33,13 @@ public class User {
         return null;
     }
 
+    public Integer getId()      { return id; }
     public String getLogin()    { return login;  }
     public String getPassword() { return password; }
     public String getEmail()    { return email; }
+
+    public void setId(Integer id) { this.id = id; } // TODO: удалить
+
 
     public static Boolean emailValidator(String email) {
         final String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
