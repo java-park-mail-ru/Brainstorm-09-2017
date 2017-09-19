@@ -19,7 +19,7 @@ public class UserController {
     @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
         final String error = user.create();
-        if (error != null) {
+        if (!error.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse(error));
         }
         return ResponseEntity.ok(new SuccessResponse("Successfully registered user"));
@@ -48,7 +48,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+    @PostMapping(path = "/edit", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = UserService.getUserById(userId);
@@ -56,8 +56,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
 
-
-        return ResponseEntity.ok(user);
-
+        String errors = user.update(body);
+        if (errors.isEmpty()) {
+            return ResponseEntity.ok(new SuccessResponse("Edit complite."));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errors));
+        }
     }
 }

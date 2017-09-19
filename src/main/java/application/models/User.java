@@ -4,8 +4,6 @@ import application.services.UserService;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class User {
@@ -22,50 +20,58 @@ public class User {
         this.email = email;
     }
 
-    public @Nullable String create() {
-        final String error = validate();
-        if (error != null) {
+
+    public String create() {
+        final String error = loginValidator(login) + emailValidator(email) + passwordValidator(password);
+        if (!error.isEmpty()) {
             return error;
         }
         if (UserService.addUser(this) == UserService.Status.ERROR_DUPLICATE) {
             return "There is a user with the same login";
         }
-        return null;
+        return "";
     }
+
+
+    public String update(User user) {
+        final StringBuilder errorBuilder = new StringBuilder();
+        if (user.email != null) {
+            errorBuilder.append(user.email);
+        }
+        if (user.password != null) {
+            errorBuilder.append(user.password);
+        }
+
+        final String error = errorBuilder.toString();
+        if (error.isEmpty()) {
+            email = user.email;
+            password = user.password;
+        }
+        return error;
+    }
+
 
     public Integer getId()      { return id; }
     public String getLogin()    { return login;  }
     public String getPassword() { return password; }
     public String getEmail()    { return email; }
 
-    public void setId(Integer id) { this.id = id; } // TODO: удалить
+    public void setId(Integer id)            { this.id = id; } // TODO: удалить
+    public void setLogin(String login)       { this.login = login; }
+    public void setPassword(String password) { this.password = password; }
+    public void setEmail(String email) { this.email = email; }
 
 
-    public static Boolean emailValidator(String email) {
+    public static String emailValidator(String email) {
         final String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
-        return Pattern.compile(ePattern).matcher(email).matches();
+        return !Pattern.compile(ePattern).matcher(email).matches() ? "Not valid email. " : "";
     }
 
-    public static Boolean loginValidator(String login) {
-        return Pattern.compile("^[\\w\\d]{3,10}$").matcher(login).matches();
+    public static String loginValidator(String login) {
+        return !Pattern.compile("^[\\w\\d]{3,10}$").matcher(login).matches() ?  "Not valid login. " : "";
     }
 
-    public static Boolean passwordValidator(String password) {
-        return Pattern.compile("^\\S{3,16}$").matcher(password).matches();
-    }
-
-    public @Nullable String validate() {
-        final StringBuilder errorBuilder = new StringBuilder();
-        if (!loginValidator(login)) {
-            errorBuilder.append("Not valid login. ");
-        }
-        if (!emailValidator(email)) {
-            errorBuilder.append("Not valid email. ");
-        }
-        if (!passwordValidator(password)) {
-            errorBuilder.append("Not valid password. ");
-        }
-        final String error = errorBuilder.toString();
-        return error.isEmpty() ? null : error;
+    public static String passwordValidator(String password) {
+        return !Pattern.compile("^\\S{3,16}$").matcher(password).matches() ? "Not valid password. " : "";
     }
 }
