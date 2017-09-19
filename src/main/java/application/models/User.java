@@ -3,7 +3,6 @@ package application.models;
 import application.services.UserService;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.Nullable;
 import java.util.regex.Pattern;
 
 public class User {
@@ -57,7 +56,6 @@ public class User {
     public String getEmail()    { return email; }
 
     public void setId(Integer id)            { this.id = id; } // TODO: удалить
-    public void setLogin(String login)       { this.login = login; }
     public void setPassword(String password) { this.password = password; }
     public void setEmail(String email) { this.email = email; }
 

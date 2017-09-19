@@ -50,13 +50,13 @@ public class UserController {
 
     @PostMapping(path = "/edit", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
-        Integer userId = (Integer) httpSession.getAttribute("userId");
-        User user = UserService.getUserById(userId);
+        final Integer userId = (Integer) httpSession.getAttribute("userId");
+        final User user = UserService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
 
-        String errors = user.update(body);
+        final String errors = user.update(body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {
