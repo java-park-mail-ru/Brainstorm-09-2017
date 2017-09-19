@@ -2,7 +2,8 @@ package application.controllers;
 
 import application.models.User;
 import application.services.UserService;
-import application.views.StatusView;
+import application.views.ErrorResponse;
+import application.views.SuccessResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,23 +11,25 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping(path = "/user")
+@CrossOrigin // for localhost usage
+//@CrossOrigin(origins = "https://[...].herokuapp.com") //for remote usage
+@RequestMapping(path = "/api/users")
 public class UserController {
-    @RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+    @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
         final String error = user.create();
         if (error != null) {
-            return ResponseEntity.badRequest().body(new StatusView(error));
+            return ResponseEntity.badRequest().body(new ErrorResponse(error));
         }
-        return ResponseEntity.ok(new StatusView("OK"));
+        return ResponseEntity.ok(new SuccessResponse("Successfully registered user"));
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity getUser(HttpSession httpSession) {
+    @RequestMapping(path = "/my", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity currentUser(HttpSession httpSession) {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = UserService.getUserById(userId);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new StatusView("User not authorized"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
         return ResponseEntity.ok(user);
     }
@@ -36,7 +39,7 @@ public class UserController {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = UserService.getUserById(userId);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new StatusView("User not authorized"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
 
 

@@ -1,6 +1,7 @@
 package application.models;
 
 import application.services.UserService;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,11 +9,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class User {
-    @JsonProperty  String login;
-    @JsonProperty private String password;
-    @JsonProperty private String email;
+    String login;
+    private String password;
+    private String email;
 
-    public User(String login, String password, String email) {
+    @JsonCreator
+    public User(@JsonProperty("login") String login, @JsonProperty("password") String password,
+                @JsonProperty("email") String email) {
         this.login = login;
         this.password = password;
         this.email = email;
@@ -29,17 +32,9 @@ public class User {
         return null;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    public String getLogin()    { return login;  }
+    public String getPassword() { return password; }
+    public String getEmail()    { return email; }
 
     public static Boolean emailValidator(String email) {
         final String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
