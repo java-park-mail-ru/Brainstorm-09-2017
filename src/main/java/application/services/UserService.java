@@ -23,8 +23,12 @@ public class UserService {
     }
 
 
-    public static User getUserById(Integer id) {
-        return users.get(id);
+    public static @Nullable User getUserById(Integer id) {
+        try {
+            return users.get(id);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
 

@@ -4,6 +4,7 @@ import application.models.User;
 import application.services.UserService;
 import application.views.ErrorResponse;
 import application.views.SuccessResponse;
+import application.views.UserData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UserController {
 
     @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
-        User user = UserService.getUserByLogin(credentials.getLogin());
+        final User user = UserService.getUserByLogin(credentials.getLogin());
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Authorisation fail."));
         }
@@ -36,15 +37,16 @@ public class UserController {
     }
 
 
-    @RequestMapping(path = "/my", method = RequestMethod.GET, produces = "application/json")
+    @GetMapping(path = "/me", produces = "application/json")
     public ResponseEntity currentUser(HttpSession httpSession) {
-        Integer userId = (Integer) httpSession.getAttribute("userId");
-        User user = UserService.getUserById(userId);
+        final Integer userId = (Integer) httpSession.getAttribute("userId");
+        final User user = UserService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new UserData(user));
     }
+
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
