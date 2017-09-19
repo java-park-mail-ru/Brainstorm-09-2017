@@ -63,4 +63,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errors));
         }
     }
+
+
+    @GetMapping(path = "/logout", produces = "application/json")
+    public ResponseEntity logout(HttpSession httpSession) {
+        httpSession.setAttribute("userId", null);
+        return ResponseEntity.ok(new SuccessResponse("Successfully logout"));
+    }
 }
