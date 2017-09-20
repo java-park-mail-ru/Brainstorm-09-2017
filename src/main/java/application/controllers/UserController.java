@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin // for localhost usage
-//@CrossOrigin(origins = "https://[...].herokuapp.com") //for remote usage
+@CrossOrigin(origins = "https://bubblerise-front.herokuapp.com, https://bubblerise-front.herokuapp.com")
 @RequestMapping(path = "/api/users")
 public class UserController {
     @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
@@ -32,7 +31,7 @@ public class UserController {
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Authorisation fail."));
         }
-        httpSession.setAttribute("userID", user.getId());
+        httpSession.setAttribute("userId", user.getId());
         return ResponseEntity.ok(new SuccessResponse("Successfully signin"));
     }
 
