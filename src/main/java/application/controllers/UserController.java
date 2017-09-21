@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "https://bubblerise-front.herokuapp.com, https://bubblerise-front.herokuapp.com")
+@CrossOrigin(origins = "https://bubblerise-front.herokuapp.com, https://bubblerise.herokuapp.com")
 @RequestMapping(path = "/api/users")
 public class UserController {
     @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
