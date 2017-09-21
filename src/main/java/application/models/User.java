@@ -12,8 +12,11 @@ public class User {
     private String email;
 
     @JsonCreator
-    public User(@JsonProperty("login") String login, @JsonProperty("password") String password,
+    public User(@JsonProperty("id") Integer id,
+                @JsonProperty("login") String login,
+                @JsonProperty("password") String password,
                 @JsonProperty("email") String email) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.email = email;
@@ -61,7 +64,7 @@ public class User {
 
 
     public static String emailValidator(String email) {
-        final String ePattern = "^[a-z0-9_-]+\\.@[a-z0-9_-]+\\.[a-z]{2,6}$";
+        final String ePattern = "^[.a-z0-9_-]+@[a-z0-9_-]+\\.[a-z]{2,6}$";
         return !Pattern.compile(ePattern).matcher(email).matches() ? "Not valid email. " : "";
     }
 
