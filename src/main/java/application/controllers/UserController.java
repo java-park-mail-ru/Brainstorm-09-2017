@@ -15,9 +15,15 @@ import javax.servlet.http.HttpSession;
 @CrossOrigin(origins = "https://bubblerise-front.herokuapp.com, https://bubblerise.herokuapp.com")
 @RequestMapping(path = "/api/users")
 public class UserController {
+    private UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
-        final String error = user.create();
+        final String error = userService.create(user);
         if (!error.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse(error));
         }
@@ -27,7 +33,7 @@ public class UserController {
 
     @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
-        final User user = UserService.getUserByLogin(credentials.getLogin());
+        final User user = userService.getUserByLogin(credentials.getLogin());
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Authorization failed."));
         }
@@ -38,8 +44,8 @@ public class UserController {
 
     @GetMapping(path = "/me", produces = "application/json")
     public ResponseEntity currentUser(HttpSession httpSession) {
-        final Integer userId = (Integer) httpSession.getAttribute("userId");
-        final User user = UserService.getUserById(userId);
+        final Long userId = (Long) httpSession.getAttribute("userId");
+        final User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
@@ -49,13 +55,13 @@ public class UserController {
 
     @PostMapping(path = "/edit", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
-        final Integer userId = (Integer) httpSession.getAttribute("userId");
-        final User user = UserService.getUserById(userId);
+        final Long userId = (Long) httpSession.getAttribute("userId");
+        final User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
 
-        final String errors = user.update(body);
+        final String errors = userService.update(body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {
