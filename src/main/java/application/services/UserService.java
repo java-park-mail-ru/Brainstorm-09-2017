@@ -2,23 +2,23 @@ package application.services;
 
 import application.models.User;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Service;
+import java.util.HashMap;
 
-import java.util.ArrayList;
-
+@Service
 public class UserService {
-    private static ArrayList<User> users = new ArrayList<>();
+    private static HashMap<Long, User> users = new HashMap<>();
 
     public enum Status { GOOD, ERROR_DUPLICATE }
 
 
     public static Status addUser(User user) {
-        for(User u : users) {
+        for(User u : users.values()) {
             if (u.getLogin().equals(user.getLogin())) {
                 return Status.ERROR_DUPLICATE;
             }
         }
-        user.setId(users.size());
-        users.add(user);
+        users.put(user.getId(), user);
         return Status.GOOD;
     }
 
@@ -33,7 +33,7 @@ public class UserService {
 
 
     public static @Nullable User getUserByLogin(String login) {
-        for(User user : users) {
+        for(User user : users.values()) {
             if (user.getLogin().equals(login)) {
                 return user;
             }

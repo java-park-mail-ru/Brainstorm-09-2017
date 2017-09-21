@@ -3,20 +3,24 @@ package application.models;
 import application.services.UserService;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 public class User {
-    private Integer id;
+    private Long id;
     private String login;
     private String password;
     private String email;
+
+    private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
     @JsonCreator
     public User(@JsonProperty("id") Integer id,
                 @JsonProperty("login") String login,
                 @JsonProperty("password") String password,
                 @JsonProperty("email") String email) {
-        this.id = id;
+        this.id = id != null ? id : ID_GENERATOR.getAndIncrement();;
         this.login = login;
         this.password = password;
         this.email = email;
@@ -53,12 +57,11 @@ public class User {
     }
 
 
-    public Integer getId()      { return id; }
+    public Long getId()      { return id; }
     public String getLogin()    { return login;  }
     public String getPassword() { return password; }
     public String getEmail()    { return email; }
 
-    public void setId(Integer id)            { this.id = id; } // TODO: удалить
     public void setPassword(String password) { this.password = password; }
     public void setEmail(String email) { this.email = email; }
 
