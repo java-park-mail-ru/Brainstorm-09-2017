@@ -61,7 +61,7 @@ public class User {
 
 
     public static String emailValidator(String email) {
-        final String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
+        final String ePattern = "^[a-z0-9_-]+\\.@[a-z0-9_-]+\\.[a-z]{2,6}$";
         return !Pattern.compile(ePattern).matcher(email).matches() ? "Not valid email. " : "";
     }
 

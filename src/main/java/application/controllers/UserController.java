@@ -29,7 +29,7 @@ public class UserController {
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
         final User user = UserService.getUserByLogin(credentials.getLogin());
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Authorisation fail."));
+            return ResponseEntity.badRequest().body(new ErrorResponse("Authorization failed."));
         }
         httpSession.setAttribute("userId", user.getId());
         return ResponseEntity.ok(new SuccessResponse("Successfully signin"));
