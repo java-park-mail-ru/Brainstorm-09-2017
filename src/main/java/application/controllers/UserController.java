@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
+    @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
         final String error = userService.create(user);
         if (!error.isEmpty()) {
@@ -53,7 +53,7 @@ public class UserController {
     }
 
 
-    @PostMapping(path = "/edit", consumes = "application/json", produces = "application/json")
+    @PatchMapping(path = "/me", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
         final User user = userService.getUserById(userId);
