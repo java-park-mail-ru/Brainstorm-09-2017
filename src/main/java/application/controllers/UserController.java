@@ -3,12 +3,15 @@ package application.controllers;
 import application.models.User;
 import application.services.UserService;
 import application.views.ErrorResponse;
+import application.views.ErrorResponse.ErrorCode;
 import application.views.SuccessResponse;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 @RestController
 @CrossOrigin(origins = "https://bubblerise-front.herokuapp.com, https://bubblerise.herokuapp.com")
@@ -22,9 +25,9 @@ public class UserController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
-        final String error = userService.create(user);
-        if (!error.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(error));
+        final ArrayList<ErrorResponse> errors = userService.create(user);
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
         }
         return ResponseEntity.ok(new SuccessResponse("Successfully registered user"));
     }
@@ -34,7 +37,7 @@ public class UserController {
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
         final User user = userService.getUserByLogin(credentials.getLogin());
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Authorization failed."));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED));
         }
         httpSession.setAttribute("userId", user.getId());
         return ResponseEntity.ok(new SuccessResponse("Successfully signin"));
@@ -43,10 +46,9 @@ public class UserController {
 
     @GetMapping(path = "/me", produces = "application/json")
     public ResponseEntity currentUser(HttpSession httpSession) {
-        final Long userId = (Long) httpSession.getAttribute("userId");
-        final User user = userService.getUserById(userId);
+        final User user = auth(httpSession);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED));
         }
         return ResponseEntity.ok(user);
     }
@@ -54,17 +56,15 @@ public class UserController {
 
     @PatchMapping(path = "/me", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
-        final Long userId = (Long) httpSession.getAttribute("userId");
-        final User user = userService.getUserById(userId);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
+        if (auth(httpSession) == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED));
         }
 
-        final String errors = userService.update(body);
+        final ArrayList<ErrorResponse> errors = userService.update(body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errors));
+            return ResponseEntity.badRequest().body(errors);
         }
     }
 
@@ -73,5 +73,11 @@ public class UserController {
     public ResponseEntity logout(HttpSession httpSession) {
         httpSession.setAttribute("userId", null);
         return ResponseEntity.ok(new SuccessResponse("Successfully logout"));
+    }
+
+
+    public @Nullable User auth(HttpSession httpSession) {
+        final Long userId = (Long) httpSession.getAttribute("userId");
+        return userService.getUserById(userId);
     }
 }

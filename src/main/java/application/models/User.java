@@ -1,9 +1,12 @@
 package application.models;
 
 import application.services.UserService;
+import application.views.ErrorResponse;
+import application.views.ErrorResponse.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
@@ -40,16 +43,16 @@ public class User {
     public void setEmail(String email) { this.email = email; }
 
 
-    public String emailValidator() {
-        final String ePattern = "^[.a-z0-9_-]+@[a-z0-9_-]+\\.[a-z]{2,6}$";
-        return !Pattern.compile(ePattern).matcher(email).matches() ? "Not valid email. " : "";
+    public @Nullable ErrorResponse emailValidator() {
+        final String ePattern = "^[.a-z0-9_-]+@[a-z0-9_.-]+\\.[a-z]{2,6}$";
+        return !Pattern.compile(ePattern).matcher(email).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_EMAIL) : null;
     }
 
-    public String loginValidator() {
-        return !Pattern.compile("^[\\w\\d]{3,10}$").matcher(login).matches() ?  "Not valid login. " : "";
+    public @Nullable ErrorResponse loginValidator() {
+        return !Pattern.compile("^[\\w\\d]{3,10}$").matcher(login).matches() ?  new ErrorResponse(ErrorCode.NOT_VALID_LOGIN) : null;
     }
 
-    public String passwordValidator() {
-        return !Pattern.compile("^\\S{3,16}$").matcher(password).matches() ? "Not valid password. " : "";
+    public @Nullable ErrorResponse passwordValidator() {
+        return !Pattern.compile("^\\S{3,16}$").matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
     }
 }
