@@ -8,7 +8,7 @@ public class ErrorResponse {
     @JsonProperty("msg")  private final String  msg;
 
     public enum ErrorCode {
-        UNCNOWN_ERROR,
+        UNKNOWN_ERROR,
         NOT_VALID_EMAIL,
         NOT_VALID_LOGIN,
         NOT_VALID_PWD,
@@ -27,7 +27,7 @@ public class ErrorResponse {
     public  ErrorResponse(ErrorCode code) {
         this.code = code.ordinal();
         switch (code) {
-            case UNCNOWN_ERROR: this.msg = "Unknown error"; break;
+            case UNKNOWN_ERROR: this.msg = "Unknown error"; break;
             case NOT_VALID_EMAIL: this.msg = "Not valid email"; break;
             case NOT_VALID_LOGIN: this.msg = "Not valid login"; break;
             case NOT_VALID_PWD: this.msg = "Not valid password"; break;
