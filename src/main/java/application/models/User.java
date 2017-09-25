@@ -2,6 +2,7 @@ package application.models;
 
 import application.services.UserService;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,6 +30,7 @@ public class User {
 
     public Long getId()         { return id; }
     public String getLogin()    { return login;  }
+    @JsonIgnore
     public String getPassword() { return password; }
     public String getEmail()    { return email; }
 

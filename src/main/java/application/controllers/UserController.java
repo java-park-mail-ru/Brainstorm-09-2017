@@ -4,7 +4,6 @@ import application.models.User;
 import application.services.UserService;
 import application.views.ErrorResponse;
 import application.views.SuccessResponse;
-import application.views.UserData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +48,7 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User not authorized"));
         }
-        return ResponseEntity.ok(new UserData(user));
+        return ResponseEntity.ok(user);
     }
 
 
