@@ -44,15 +44,17 @@ public class User {
 
 
     public @Nullable ErrorResponse emailValidator() {
-        final String ePattern = "^[.a-z0-9_-]+@[a-z0-9_.-]+\\.[a-z]{2,6}$";
-        return !Pattern.compile(ePattern).matcher(email).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_EMAIL) : null;
+        final Pattern pattern = Pattern.compile("^[.a-z0-9_-]+@[a-z0-9_.-]+\\.[a-z]{2,6}$");
+        return !pattern.matcher(email).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_EMAIL) : null;
     }
 
     public @Nullable ErrorResponse loginValidator() {
-        return !Pattern.compile("^[\\w\\d]{3,10}$").matcher(login).matches() ?  new ErrorResponse(ErrorCode.NOT_VALID_LOGIN) : null;
+        final Pattern pattern = Pattern.compile("^[\\w\\d]{3,10}$");
+        return !pattern.matcher(login).matches() ?  new ErrorResponse(ErrorCode.NOT_VALID_LOGIN) : null;
     }
 
     public @Nullable ErrorResponse passwordValidator() {
-        return !Pattern.compile("^\\S{3,16}$").matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
+        final Pattern pattern = Pattern.compile("^\\S{3,16}$");
+        return !pattern.matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
     }
 }
