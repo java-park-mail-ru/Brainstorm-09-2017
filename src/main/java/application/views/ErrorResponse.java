@@ -18,11 +18,13 @@ public class ErrorResponse {
         UNAUTHORIZED
     }
 
+
     @JsonCreator
     public ErrorResponse(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
+
 
     public  ErrorResponse(ErrorCode code) {
         this.code = code.ordinal();
@@ -38,6 +40,14 @@ public class ErrorResponse {
             default: this.msg = "Unknown error"; break;
         }
     }
+
+
+    // Возвращает список с первым элементом this
+    public ErrorResponseList toList() {
+        final ErrorResponseList errors = new ErrorResponseList();
+        return errors.add(this);
+    }
+
 
     public Integer getCode() {
         return code;

@@ -4,6 +4,7 @@ import application.models.User;
 import application.services.UserService;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
+import application.views.ErrorResponseList;
 import application.views.SuccessResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class UserController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
-        final ArrayList<ErrorResponse> errors = userService.create(user);
+        final ErrorResponseList errors = userService.create(user);
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
@@ -37,7 +38,7 @@ public class UserController {
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
         final User user = userService.getUserByLogin(credentials.getLogin());
         if (user == null || !user.getPassword().equals(credentials.getPassword())) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED));
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED).toList());
         }
         httpSession.setAttribute("userId", user.getId());
         return ResponseEntity.ok(new SuccessResponse("Successfully signin"));
@@ -48,7 +49,7 @@ public class UserController {
     public ResponseEntity currentUser(HttpSession httpSession) {
         final User user = auth(httpSession);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
         return ResponseEntity.ok(user);
     }
@@ -57,10 +58,10 @@ public class UserController {
     @PatchMapping(path = "/me", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
         if (auth(httpSession) == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
 
-        final ArrayList<ErrorResponse> errors = userService.update(body);
+        final ErrorResponseList errors = userService.update(body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {

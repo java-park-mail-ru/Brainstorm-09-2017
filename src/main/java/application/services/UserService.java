@@ -3,6 +3,7 @@ package application.services;
 import application.models.User;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
+import application.views.ErrorResponseList;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,9 @@ import java.util.regex.Pattern;
 public class UserService {
     private static HashMap<Long, User> users = new HashMap<>();
 
-    public ArrayList<ErrorResponse> create(User user) {
-        final ArrayList<ErrorResponse> errors = new ArrayList<>();
-        ErrorResponse error = user.emailValidator();
-        if (error != null) errors.add(error);
-        error = user.loginValidator();
-        if (error != null) errors.add(error);
-        error = user.passwordValidator();
-        if (error != null) errors.add(error);
+    public ErrorResponseList create(User user) {
+        final ErrorResponseList errors = new ErrorResponseList();
+        errors.add(user.emailValidator()).add(user.loginValidator()).add(user.passwordValidator());
 
         if (!errors.isEmpty()) {
             return errors;
@@ -37,12 +33,9 @@ public class UserService {
     }
 
 
-    public ArrayList<ErrorResponse> update(User user) {
-        final ArrayList<ErrorResponse> errors = new ArrayList<>();
-        ErrorResponse error = user.emailValidator();
-        if (error != null) errors.add(error);
-        error = user.passwordValidator();
-        if (error != null) errors.add(error);
+    public ErrorResponseList update(User user) {
+        final ErrorResponseList errors = new ErrorResponseList();
+        errors.add(user.emailValidator()).add(user.passwordValidator());
         if (!errors.isEmpty()) {
             return errors;
         }
