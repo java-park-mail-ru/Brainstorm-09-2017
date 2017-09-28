@@ -70,7 +70,7 @@ public class UserController {
     }
 
 
-    @GetMapping(path = "/logout", produces = "application/json")
+    @PostMapping(path = "/logout", produces = "application/json")
     public ResponseEntity logout(HttpSession httpSession) {
         httpSession.setAttribute("userId", null);
         return ResponseEntity.ok(new SuccessResponse("Successfully logout"));
