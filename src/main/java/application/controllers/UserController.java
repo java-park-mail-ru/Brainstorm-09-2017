@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 
 @RestController
 @CrossOrigin(origins = {"https://bubblerise-front.herokuapp.com", "https://bubblerise.herokuapp.com"})
@@ -36,8 +35,8 @@ public class UserController {
 
     @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
-        final User user = userService.getUserByLogin(credentials.getLogin());
-        if (user == null || !user.getPassword().equals(credentials.getPassword())) {
+        final User user = userService.auth(credentials);
+        if (user == null) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED).toList());
         }
         httpSession.setAttribute("userId", user.getId());

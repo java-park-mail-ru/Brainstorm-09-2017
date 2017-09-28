@@ -6,29 +6,30 @@ import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 @Service
 public class UserService {
     private static HashMap<Long, User> users = new HashMap<>();
 
-    public ErrorResponseList create(User user) {
+    public ErrorResponseList create(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
-        errors.add(user.emailValidator()).add(user.loginValidator()).add(user.passwordValidator());
+        errors.add(credentials.emailValidator()).add(credentials.loginValidator()).add(credentials.passwordValidator());
 
         if (!errors.isEmpty()) {
             return errors;
         }
         for(User u : users.values()) {
-            if (u.getLogin().equals(user.getLogin())) {
+            if (u.getLogin().equals(credentials.getLogin())) {
                 errors.add(new ErrorResponse(ErrorCode.USER_DUPLICATE));
                 return errors;
             }
         }
-        users.put(user.getId(), user);
+
+        credentials.setPassword(BCrypt.hashpw(credentials.getPassword(), BCrypt.gensalt()));
+        users.put(credentials.getId(), credentials);
         return errors;
     }
 
@@ -68,5 +69,14 @@ public class UserService {
             }
         }
         return null;
+    }
+
+
+    public @Nullable User auth(User credentials) {
+        final User user = getUserByLogin(credentials.getLogin());
+        if (user == null || !BCrypt.checkpw(credentials.getPassword(), user.getPassword())) {
+            return null;
+        }
+        return user;
     }
 }
