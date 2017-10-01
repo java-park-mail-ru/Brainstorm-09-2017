@@ -32,4 +32,12 @@ public class ErrorResponseList implements Iterable {
         return this;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder str = new StringBuilder();
+        for (ErrorResponse err : list) {
+            str.append(err.toString());
+        }
+        return str.toString();
+    }
 }

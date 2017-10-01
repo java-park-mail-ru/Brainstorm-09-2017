@@ -1,4 +1,4 @@
-package application.services;
+package application;
 
 import application.models.User;
 import application.views.ErrorResponse;

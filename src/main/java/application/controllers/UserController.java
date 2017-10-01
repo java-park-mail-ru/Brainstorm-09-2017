@@ -1,7 +1,7 @@
 package application.controllers;
 
 import application.models.User;
-import application.services.UserService;
+import application.UserService;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
@@ -77,7 +77,7 @@ public class UserController {
 
 
     @GetMapping(path = "/records", produces = "application/json")
-    public ResponseEntity records(HttpSession httpSession) {
+    public ResponseEntity records() {
         return ResponseEntity.ok(userService.getRecords());
     }
 

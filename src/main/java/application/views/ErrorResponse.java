@@ -49,6 +49,11 @@ public class ErrorResponse {
     }
 
 
+    @Override
+    public String toString() {
+        return "ERROR №" + code + ": " + msg + ". ";
+    }
+
     public Integer getCode() {
         return code;
     }

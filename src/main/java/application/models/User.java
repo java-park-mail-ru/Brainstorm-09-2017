@@ -1,6 +1,5 @@
 package application.models;
 
-import application.services.UserService;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,7 +27,7 @@ public class User {
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
     @JsonCreator
-    public User(@JsonProperty("id") Integer id,
+    public User(@Nullable @JsonProperty("id") Integer id,
                 @JsonProperty("login") String login,
                 @JsonProperty("password") String password,
                 @JsonProperty("email") String email) {
