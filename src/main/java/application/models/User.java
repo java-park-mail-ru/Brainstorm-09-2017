@@ -8,14 +8,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 public class User {
-    private Long id;
-    private String login;
-    private String password;
-    private String email;
+    @JsonProperty("id")             private Long    id;
+    @JsonProperty("login")          private String  login;
+    @JsonProperty("password")       private String  password;
+    @JsonProperty("email")          private String  email;
+
+    @JsonProperty("numberOfGames")  private Integer numberOfGames;
+    @JsonProperty("record")         private Integer record;
+
+    @JsonProperty("createdDate")    private Date    createdDate;
+    @JsonProperty("updatedDate")    private Date    updatedDate;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -28,19 +36,15 @@ public class User {
         this.login = login;
         this.password = password;
         this.email = email;
+        // FIXME: Временно
+        final Random random = new Random();
+        this.numberOfGames = random.nextInt(100);
+        this.record = random.nextInt(100000);
+        //this.numberOfGames = 0;
+        //this.record = 0;
+        this.createdDate = new Date();
+        this.updatedDate = new Date();
     }
-
-
-    public Long getId()         { return id; }
-    public String getLogin()    { return login;  }
-    @JsonIgnore
-    public String getPassword() { return password; }
-    public String getEmail()    { return email; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setLogin(String login) { this.login = login; }
-    public void setPassword(String password) { this.password = password; }
-    public void setEmail(String email) { this.email = email; }
 
 
     public @Nullable ErrorResponse emailValidator() {
@@ -57,4 +61,22 @@ public class User {
         final Pattern pattern = Pattern.compile("^\\S{3,16}$");
         return !pattern.matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
     }
+
+
+    public Long     getId()             { return id; }
+    public String   getLogin()          { return login;  }
+    @JsonIgnore
+    public String   getPassword()       { return password; }
+    public String   getEmail()          { return email; }
+    public Integer  getNumberOfGames()  { return numberOfGames; }
+    public Integer  getRecord()         { return record; }
+    public Date     getCreatedDate()    { return createdDate; }
+    public Date     getUpdatedDate()    { return updatedDate; }
+
+    public void setPassword(String password)    { this.password = password; }
+    public void setEmail(String email)          { this.email = email; }
+    public void setRecord(Integer record)       { this.record = record; }
+    public void setUpdatedDate()                { this.updatedDate = new Date(); }
+
+    public void incNumberOfGames() { this.numberOfGames++; }
 }

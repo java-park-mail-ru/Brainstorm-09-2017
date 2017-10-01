@@ -76,6 +76,12 @@ public class UserController {
     }
 
 
+    @GetMapping(path = "/records", produces = "application/json")
+    public ResponseEntity records(HttpSession httpSession) {
+        return ResponseEntity.ok(userService.getRecords());
+    }
+
+
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
         return userService.getUserById(userId);

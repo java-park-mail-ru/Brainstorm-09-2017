@@ -4,10 +4,13 @@ import application.models.User;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
+import application.views.RecordResponse;
+import application.views.RecordResponse.*;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -34,24 +37,26 @@ public class UserService {
     }
 
 
-    public ErrorResponseList update(User user) {
+    public ErrorResponseList update(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
-        errors.add(user.emailValidator()).add(user.passwordValidator());
+        errors.add(credentials.emailValidator()).add(credentials.passwordValidator());
         if (!errors.isEmpty()) {
             return errors;
         }
 
-        final User userForUpdate = getUserById(user.getId());
+        final User userForUpdate = getUserById(credentials.getId());
         if (userForUpdate == null) {
             errors.add(new ErrorResponse(ErrorCode.USER_NOT_FOUND));
             return errors;
         }
 
-        if (user.getEmail() != null) {
-            userForUpdate.setEmail(user.getEmail());
+        if (credentials.getEmail() != null) {
+            userForUpdate.setEmail(credentials.getEmail());
+            userForUpdate.setUpdatedDate();
         }
-        if (user.getPassword() != null) {
-            userForUpdate.setPassword(user.getPassword());
+        if (credentials.getPassword() != null) {
+            userForUpdate.setPassword(credentials.getPassword());
+            userForUpdate.setUpdatedDate();
         }
         return errors;
     }
@@ -78,5 +83,17 @@ public class UserService {
             return null;
         }
         return user;
+    }
+
+
+    public ArrayList<RecordResponse> getRecords() {
+        ArrayList<RecordResponse> records = new ArrayList<>();
+        for(User user : users.values()) {
+            if (user.getRecord() > 0) {
+                records.add(new RecordResponse(user));
+            }
+        }
+        records.sort(new RecordResponse.Compare());
+        return records;
     }
 }
