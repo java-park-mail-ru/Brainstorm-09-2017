@@ -28,9 +28,9 @@ public class User {
 
     @JsonCreator
     public User(@Nullable @JsonProperty("id") Integer id,
-                @JsonProperty("login") String login,
-                @JsonProperty("password") String password,
-                @JsonProperty("email") String email) {
+                @Nullable @JsonProperty("login") String login,
+                @Nullable @JsonProperty("password") String password,
+                @Nullable @JsonProperty("email") String email) {
         this.id = id != null ? id : ID_GENERATOR.getAndIncrement();
         this.login = login;
         this.password = password;

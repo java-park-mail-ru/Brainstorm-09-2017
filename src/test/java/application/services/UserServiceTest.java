@@ -1,6 +1,6 @@
 package application.services;
 
-import application.UserService;
+import application.servicies.UserService;
 import application.models.User;
 import application.views.ErrorResponseList;
 import org.junit.Before;
@@ -24,18 +24,60 @@ public class UserServiceTest {
     }
 
 
-    @Test
-    public void testCreate() {
-        ErrorResponseList errors = userService.create(credentials);
+    private User create(User user) {
+        final ErrorResponseList errors = userService.create(user);
         assertTrue(errors.toString(), errors.isEmpty());
 
-        final User createdUser = userService.getUserByLogin(credentials.getLogin());
-        assertNotNull(createdUser);
-        assertEquals(createdUser.getLogin(), credentials.getLogin());
-        assertEquals(createdUser.getPassword(), credentials.getPassword());
-        assertEquals(createdUser.getEmail(), credentials.getEmail());
+        final User createdUser = userService.getUserByLogin(user.getLogin());
+        assertNotNull("Пользователь не был создан", createdUser);
+        assertEquals("Логин не совпал", createdUser.getLogin(), user.getLogin());
+        assertEquals("Пароль не совпал", createdUser.getPassword(), user.getPassword());
+        assertEquals("Почта не совпала", createdUser.getEmail(), user.getEmail());
+        return createdUser;
+    }
 
-        errors = userService.create(credentials);
-        assertFalse("Не выдало ошибки об существования такого же пользователя", errors.isEmpty());
+
+    @Test
+    public void testCreate() {
+        create(credentials);
+        final ErrorResponseList errors = userService.create(credentials);
+        assertFalse("Не выдало ошибки об существовании такого же пользователя", errors.isEmpty());
+    }
+
+
+    private User update(Long id, User newCredentials) {
+        final ErrorResponseList errors = userService.update(id, newCredentials);
+        assertTrue(errors.toString(), errors.isEmpty());
+        final User updatedUser = userService.getUserById(id);
+        assertNotNull("Пользователь был удалён", updatedUser);
+        return updatedUser;
+    }
+
+
+    @Test
+    public void testUpdatePwdAndEmail() {
+        create(credentials);
+        final User newCredentials = new User(null, null, "newPassword", "newuser@mail.ru");
+        final User updatedUser = update(credentials.getId(), newCredentials);
+        assertTrue("Пароль не изменился при обновлении пароля и почты", userService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
+        assertEquals("Почта не изменилась при обновлении пароля и почты", updatedUser.getEmail(), newCredentials.getEmail());
+    }
+
+
+    @Test
+    public void testUpdatePwd() {
+        create(credentials);
+        final User newCredentials = new User(null, null, "newPassword", null);
+        final User updatedUser = update(credentials.getId(), newCredentials);
+        assertTrue("Пароль не изменился при обновлении пароля", userService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
+    }
+
+
+    @Test
+    public void testUpdateEmail() {
+        create(credentials);
+        final User newCredentials = new User(null, null, null, "newuser@mail.ru");
+        final User updatedUser = update(credentials.getId(), newCredentials);
+        assertEquals("Почта не изменилась при обновлении почты", updatedUser.getEmail(), newCredentials.getEmail());
     }
 }

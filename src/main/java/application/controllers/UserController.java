@@ -1,7 +1,7 @@
 package application.controllers;
 
 import application.models.User;
-import application.UserService;
+import application.servicies.UserService;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
@@ -56,11 +56,12 @@ public class UserController {
 
     @PatchMapping(path = "/me", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
-        if (auth(httpSession) == null) {
+        final User user = auth(httpSession);
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
 
-        final ErrorResponseList errors = userService.update(body);
+        final ErrorResponseList errors = userService.update(user.getId(), body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {

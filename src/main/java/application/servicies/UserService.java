@@ -1,11 +1,10 @@
-package application;
+package application.servicies;
 
 import application.models.User;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
 import application.views.RecordResponse;
-import application.views.RecordResponse.*;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -31,20 +30,25 @@ public class UserService {
             }
         }
 
-        credentials.setPassword(BCrypt.hashpw(credentials.getPassword(), BCrypt.gensalt()));
+        credentials.setPassword(hashpw(credentials.getPassword()));
         users.put(credentials.getId(), credentials);
         return errors;
     }
 
 
-    public ErrorResponseList update(User credentials) {
+    public ErrorResponseList update(Long id, User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
-        errors.add(credentials.emailValidator()).add(credentials.passwordValidator());
+        if (credentials.getEmail() != null) {
+            errors.add(credentials.emailValidator());
+        }
+        if (credentials.getPassword() != null) {
+            errors.add(credentials.passwordValidator());
+        }
         if (!errors.isEmpty()) {
             return errors;
         }
 
-        final User userForUpdate = getUserById(credentials.getId());
+        final User userForUpdate = getUserById(id);
         if (userForUpdate == null) {
             errors.add(new ErrorResponse(ErrorCode.USER_NOT_FOUND));
             return errors;
@@ -55,7 +59,7 @@ public class UserService {
             userForUpdate.setUpdatedDate();
         }
         if (credentials.getPassword() != null) {
-            userForUpdate.setPassword(credentials.getPassword());
+            userForUpdate.setPassword(hashpw(credentials.getPassword()));
             userForUpdate.setUpdatedDate();
         }
         return errors;
@@ -79,7 +83,7 @@ public class UserService {
 
     public @Nullable User auth(User credentials) {
         final User user = getUserByLogin(credentials.getLogin());
-        if (user == null || !BCrypt.checkpw(credentials.getPassword(), user.getPassword())) {
+        if (user == null || !checkpw(credentials.getPassword(), user.getPassword())) {
             return null;
         }
         return user;
@@ -87,7 +91,7 @@ public class UserService {
 
 
     public ArrayList<RecordResponse> getRecords() {
-        ArrayList<RecordResponse> records = new ArrayList<>();
+        final ArrayList<RecordResponse> records = new ArrayList<>();
         for(User user : users.values()) {
             if (user.getRecord() > 0) {
                 records.add(new RecordResponse(user));
@@ -95,5 +99,15 @@ public class UserService {
         }
         records.sort(new RecordResponse.Compare());
         return records;
+    }
+
+
+    private String hashpw(String pwd) {
+        return BCrypt.hashpw(pwd, BCrypt.gensalt());
+    }
+
+
+    public Boolean checkpw(String pwd, String storedHash) {
+        return BCrypt.checkpw(pwd, storedHash);
     }
 }
