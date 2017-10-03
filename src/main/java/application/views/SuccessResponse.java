@@ -8,7 +8,7 @@ public class SuccessResponse {
     private final String msg;
 
     @JsonCreator
-    public SuccessResponse(String msg) {
+    public SuccessResponse(@JsonProperty("msg") String msg) {
         this.msg = msg;
     }
 

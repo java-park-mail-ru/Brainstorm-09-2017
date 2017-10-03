@@ -1,12 +1,13 @@
 package application.controllers;
 
 import application.models.User;
-import application.servicies.UserService;
+import application.servicies.UsersService;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
 import application.views.ErrorResponseList;
 import application.views.SuccessResponse;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +17,17 @@ import javax.servlet.http.HttpSession;
 @RestController
 @CrossOrigin(origins = {"https://bubblerise-front.herokuapp.com", "https://bubblerise.herokuapp.com"})
 @RequestMapping(path = "/api/users")
-public class UserController {
-    private UserService userService;
+public class UsersController {
+    private UsersService usersService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @Autowired
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
-        final ErrorResponseList errors = userService.create(user);
+        final ErrorResponseList errors = usersService.create(user);
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
@@ -35,7 +37,7 @@ public class UserController {
 
     @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
-        final User user = userService.auth(credentials);
+        final User user = usersService.auth(credentials);
         if (user == null) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED).toList());
         }
@@ -61,7 +63,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
 
-        final ErrorResponseList errors = userService.update(user.getId(), body);
+        final ErrorResponseList errors = usersService.update(user.getId(), body);
         if (errors.isEmpty()) {
             return ResponseEntity.ok(new SuccessResponse("Edit complite."));
         } else {
@@ -79,12 +81,12 @@ public class UserController {
 
     @GetMapping(path = "/records", produces = "application/json")
     public ResponseEntity records() {
-        return ResponseEntity.ok(userService.getRecords());
+        return ResponseEntity.ok(usersService.getRecords());
     }
 
 
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
-        return userService.getUserById(userId);
+        return usersService.getUserById(userId);
     }
 }

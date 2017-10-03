@@ -15,15 +15,21 @@ public class ErrorResponseList implements Iterable {
         list = new ArrayList<>();
     }
 
+    @JsonCreator
+    public ErrorResponseList(ArrayList<ErrorResponse> errors) {
+        list = errors;
+    }
+
+
     @Override
     public @NotNull Iterator<ErrorResponse> iterator() {
         return list.iterator();
     }
 
+
     @JsonIgnore
-    public Boolean isEmpty() {
-        return list.isEmpty();
-    }
+    public Boolean isEmpty() { return list.isEmpty(); }
+
 
     public ErrorResponseList add(@Nullable ErrorResponse err) {
         if (err != null) {
@@ -31,6 +37,7 @@ public class ErrorResponseList implements Iterable {
         }
         return this;
     }
+
 
     @Override
     public String toString() {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
-public class UserService {
+public class UsersService {
     private static HashMap<Long, User> users = new HashMap<>();
 
     public ErrorResponseList create(User credentials) {
