@@ -49,7 +49,8 @@ public class ErrorResponse {
     // Возвращает список с первым элементом this
     public ErrorResponseList toList() {
         final ErrorResponseList errors = new ErrorResponseList();
-        return errors.add(this);
+        errors.add(this);
+        return errors;
     }
 
 
