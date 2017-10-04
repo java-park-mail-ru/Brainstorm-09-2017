@@ -52,12 +52,12 @@ public class User {
     }
 
     public @Nullable ErrorResponse loginValidator() {
-        final Pattern pattern = Pattern.compile("^[\\w\\d]{3,10}$");
+        final Pattern pattern = Pattern.compile("^[\\w\\d]{3,20}$");
         return !pattern.matcher(login).matches() ?  new ErrorResponse(ErrorCode.NOT_VALID_LOGIN) : null;
     }
 
     public @Nullable ErrorResponse passwordValidator() {
-        final Pattern pattern = Pattern.compile("^\\S{3,16}$");
+        final Pattern pattern = Pattern.compile("^\\S{3,30}$");
         return !pattern.matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
     }
 
