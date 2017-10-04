@@ -8,24 +8,28 @@ public class ErrorResponse {
     @JsonProperty("msg") private final String msg;
 
     public enum ErrorCode {
-        UNKNOWN_ERROR("Unknown error"),
-        NOT_VALID_EMAIL("Not valid email"),
-        NOT_VALID_LOGIN("Not valid login"),
-        NOT_VALID_PWD("Not valid password"),
-        USER_DUPLICATE("There is a user with the same login"),
-        USER_NOT_FOUND("User not found"),
-        AUTHORISATION_FAILED("Authorization failed"),
-        UNAUTHORIZED("User not authorized");
+        UNKNOWN_ERROR(0, "Unknown error"),
+        NOT_VALID_EMAIL(1, "Not valid email"),
+        NOT_VALID_LOGIN(2, "Not valid login"),
+        NOT_VALID_PWD(3, "Not valid password"),
+        USER_DUPLICATE(4, "There is a user with the same login"),
+        USER_NOT_FOUND(5, "User not found"),
+        AUTHORISATION_FAILED(6, "Authorization failed"),
+        UNAUTHORIZED(7, "User not authorized");
 
+        private Integer code;
         private String msg;
 
-        ErrorCode(String msg) {
+        ErrorCode(Integer code, String msg) {
+            this.code = code;
             this.msg = msg;
         }
 
         public String getMsg() {
             return msg;
         }
+
+        public Integer getCode() { return code; }
     }
 
 
@@ -37,7 +41,7 @@ public class ErrorResponse {
 
 
     public  ErrorResponse(ErrorCode code) {
-        this.code = code.ordinal();
+        this.code = code.getCode();
         this.msg = code.getMsg();
     }
 

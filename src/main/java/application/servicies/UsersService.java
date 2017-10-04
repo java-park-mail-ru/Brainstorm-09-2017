@@ -18,7 +18,10 @@ public class UsersService {
 
     public ErrorResponseList create(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
-        errors.add(credentials.emailValidator()).add(credentials.loginValidator()).add(credentials.passwordValidator());
+        errors
+                .add(credentials.emailValidator())
+                .add(credentials.loginValidator())
+                .add(credentials.passwordValidator());
 
         if (!errors.isEmpty()) {
             return errors;
