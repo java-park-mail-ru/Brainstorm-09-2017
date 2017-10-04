@@ -13,16 +13,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 public class User {
-    @JsonProperty("id")             private Long    id;
-    @JsonProperty("login")          private String  login;
-    @JsonProperty("password")       private String  password;
-    @JsonProperty("email")          private String  email;
+    @JsonProperty("id")
+    private Long id;
+    @JsonProperty("login")
+    private String login;
+    @JsonProperty("password")
+    private String  password;
+    @JsonProperty("email")
+    private String email;
 
-    @JsonProperty("numberOfGames")  private Integer numberOfGames;
-    @JsonProperty("record")         private Integer record;
+    @JsonProperty("numberOfGames")
+    private Integer numberOfGames;
+    @JsonProperty("record")
+    private Integer record;
 
-    @JsonProperty("createdDate")    private Date    createdDate;
-    @JsonProperty("updatedDate")    private Date    updatedDate;
+    @JsonProperty("createdDate")
+    private Date createdDate;
+    @JsonProperty("updatedDate")
+    private Date updatedDate;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -62,20 +70,20 @@ public class User {
     }
 
 
-    public Long     getId()             { return id; }
-    public String   getLogin()          { return login;  }
+    public Long getId() { return id; }
+    public String getLogin() { return login;  }
     @JsonIgnore
-    public String   getPassword()       { return password; }
-    public String   getEmail()          { return email; }
-    public Integer  getNumberOfGames()  { return numberOfGames; }
-    public Integer  getRecord()         { return record; }
-    public Date     getCreatedDate()    { return createdDate; }
-    public Date     getUpdatedDate()    { return updatedDate; }
+    public String getPassword() { return password; }
+    public String getEmail() { return email; }
+    public Integer getNumberOfGames() { return numberOfGames; }
+    public Integer getRecord() { return record; }
+    public Date getCreatedDate() { return createdDate; }
+    public Date getUpdatedDate() { return updatedDate; }
 
-    public void setPassword(String password)    { this.password = password; }
-    public void setEmail(String email)          { this.email = email; }
-    public void setRecord(Integer record)       { this.record = record; }
-    public void setUpdatedDate()                { this.updatedDate = new Date(); }
+    public void setPassword(String password) { this.password = password; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRecord(Integer record) { this.record = record; }
+    public void setUpdatedDate() { this.updatedDate = new Date(); }
 
     public void incNumberOfGames() { this.numberOfGames++; }
 }

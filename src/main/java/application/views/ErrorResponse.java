@@ -5,17 +5,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ErrorResponse {
     @JsonProperty("code") private final Integer code;
-    @JsonProperty("msg")  private final String  msg;
+    @JsonProperty("msg") private final String msg;
 
     public enum ErrorCode {
-        UNKNOWN_ERROR,
-        NOT_VALID_EMAIL,
-        NOT_VALID_LOGIN,
-        NOT_VALID_PWD,
-        USER_DUPLICATE,
-        USER_NOT_FOUND,
-        AUTHORISATION_FAILED,
-        UNAUTHORIZED
+        UNKNOWN_ERROR("Unknown error"),
+        NOT_VALID_EMAIL("Not valid email"),
+        NOT_VALID_LOGIN("Not valid login"),
+        NOT_VALID_PWD("Not valid password"),
+        USER_DUPLICATE("There is a user with the same login"),
+        USER_NOT_FOUND("User not found"),
+        AUTHORISATION_FAILED("Authorization failed"),
+        UNAUTHORIZED("User not authorized");
+
+        private String msg;
+
+        ErrorCode(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
     }
 
 
@@ -28,17 +38,7 @@ public class ErrorResponse {
 
     public  ErrorResponse(ErrorCode code) {
         this.code = code.ordinal();
-        switch (code) {
-            case UNKNOWN_ERROR: this.msg = "Unknown error"; break;
-            case NOT_VALID_EMAIL: this.msg = "Not valid email"; break;
-            case NOT_VALID_LOGIN: this.msg = "Not valid login"; break;
-            case NOT_VALID_PWD: this.msg = "Not valid password"; break;
-            case USER_DUPLICATE: this.msg = "There is a user with the same login"; break;
-            case USER_NOT_FOUND: this.msg = "User not found"; break;
-            case AUTHORISATION_FAILED: this.msg = "Authorization failed"; break;
-            case UNAUTHORIZED: this.msg = "User not authorized"; break;
-            default: this.msg = "Unknown error"; break;
-        }
+        this.msg = code.getMsg();
     }
 
 

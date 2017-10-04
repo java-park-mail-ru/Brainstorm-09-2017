@@ -64,11 +64,10 @@ public class UsersController {
         }
 
         final ErrorResponseList errors = usersService.update(user.getId(), body);
-        if (errors.isEmpty()) {
-            return ResponseEntity.ok(new SuccessResponse("Edit complite."));
-        } else {
+        if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
+        return ResponseEntity.ok(new SuccessResponse("Edit complite."));
     }
 
 

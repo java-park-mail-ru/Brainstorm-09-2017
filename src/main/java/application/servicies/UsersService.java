@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 @Service
 public class UsersService {
-    private static HashMap<Long, User> users = new HashMap<>();
+    private HashMap<Long, User> users = new HashMap<>();
 
     public ErrorResponseList create(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
@@ -91,13 +91,14 @@ public class UsersService {
 
 
     public ArrayList<RecordResponse> getRecords() {
+        final ArrayList<User> sortedUsers = new ArrayList<>(users.values());
+        sortedUsers.sort((user1, user2) -> user2.getRecord().compareTo(user1.getRecord()));
         final ArrayList<RecordResponse> records = new ArrayList<>();
-        for(User user : users.values()) {
+        for(User user : sortedUsers) {
             if (user.getRecord() > 0) {
                 records.add(new RecordResponse(user));
             }
         }
-        records.sort(new RecordResponse.Compare());
         return records;
     }
 
