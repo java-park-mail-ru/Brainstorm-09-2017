@@ -3,9 +3,13 @@ package application.views;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ErrorResponse {
     @JsonProperty("code") private final Integer code;
     @JsonProperty("msg") private final String msg;
+
 
     public enum ErrorCode {
         UNKNOWN_ERROR(0, "Unknown error"),
@@ -47,9 +51,10 @@ public class ErrorResponse {
 
 
     // Возвращает список с первым элементом this
-    public ErrorResponseList toList() {
-        final ErrorResponseList errors = new ErrorResponseList();
-        return errors.add(this);
+    public List<ErrorResponse> toList() {
+        final List<ErrorResponse> errors = new ArrayList<ErrorResponse>();
+        errors.add(this);
+        return errors;
     }
 
 
@@ -57,6 +62,7 @@ public class ErrorResponse {
     public String toString() {
         return "ERROR №" + code + ": " + msg + ". ";
     }
+
 
     public Integer getCode() {
         return code;

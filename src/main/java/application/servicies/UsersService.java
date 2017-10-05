@@ -11,35 +11,37 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UsersService {
     private HashMap<Long, User> users = new HashMap<>();
 
-    public ErrorResponseList create(User credentials) {
+
+    public List<ErrorResponse> create(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
         errors
                 .add(credentials.emailValidator())
                 .add(credentials.loginValidator())
                 .add(credentials.passwordValidator());
 
-        if (!errors.isEmpty()) {
-            return errors;
+        if (!errors.getList().isEmpty()) {
+            return errors.getList();
         }
         for(User u : users.values()) {
             if (u.getLogin().equals(credentials.getLogin())) {
                 errors.add(new ErrorResponse(ErrorCode.USER_DUPLICATE));
-                return errors;
+                return errors.getList();
             }
         }
 
         credentials.setPassword(hashpw(credentials.getPassword()));
         users.put(credentials.getId(), credentials);
-        return errors;
+        return errors.getList();
     }
 
 
-    public ErrorResponseList update(Long id, User credentials) {
+    public List<ErrorResponse> update(Long id, User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
         if (credentials.getEmail() != null) {
             errors.add(credentials.emailValidator());
@@ -47,14 +49,14 @@ public class UsersService {
         if (credentials.getPassword() != null) {
             errors.add(credentials.passwordValidator());
         }
-        if (!errors.isEmpty()) {
-            return errors;
+        if (!errors.getList().isEmpty()) {
+            return errors.getList();
         }
 
         final User userForUpdate = getUserById(id);
         if (userForUpdate == null) {
             errors.add(new ErrorResponse(ErrorCode.USER_NOT_FOUND));
-            return errors;
+            return errors.getList();
         }
 
         if (credentials.getEmail() != null) {
@@ -65,7 +67,7 @@ public class UsersService {
             userForUpdate.setPassword(hashpw(credentials.getPassword()));
             userForUpdate.setUpdatedDate();
         }
-        return errors;
+        return errors.getList();
     }
 
 
@@ -93,10 +95,10 @@ public class UsersService {
     }
 
 
-    public ArrayList<RecordResponse> getRecords() {
-        final ArrayList<User> sortedUsers = new ArrayList<>(users.values());
+    public List<RecordResponse> getRecords() {
+        final List<User> sortedUsers = new ArrayList<>(users.values());
         sortedUsers.sort((user1, user2) -> user2.getRecord().compareTo(user1.getRecord()));
-        final ArrayList<RecordResponse> records = new ArrayList<>();
+        final List<RecordResponse> records = new ArrayList<>();
         for(User user : sortedUsers) {
             if (user.getRecord() > 0) {
                 records.add(new RecordResponse(user));
