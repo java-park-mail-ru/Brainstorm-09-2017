@@ -18,12 +18,12 @@ public class UsersService {
 
     public ErrorResponseList create(User credentials) {
         final ErrorResponseList errors = new ErrorResponseList();
-        errors.add(credentials.emailValidator());
-        errors.add(credentials.loginValidator());
-        errors.add(credentials.passwordValidator());
+        errors
+                .add(credentials.emailValidator())
+                .add(credentials.loginValidator())
+                .add(credentials.passwordValidator());
 
         if (!errors.isEmpty()) {
-            System.out.println(errors.toString());
             return errors;
         }
         for(User u : users.values()) {
