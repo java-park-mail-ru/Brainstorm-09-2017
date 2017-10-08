@@ -25,7 +25,7 @@ public class UsersService {
         credentials.passwordValidator().ifPresent(errors::add);
 
         if (!errors.isEmpty()) {
-            return new ArrayList<>(errors.stream().map(ErrorResponse::new).collect(Collectors.toList()));
+            return errors.stream().map(ErrorResponse::new).collect(Collectors.toList());
         }
         for(User u : users.values()) {
             if (u.getLogin().equals(credentials.getLogin())) {
@@ -48,7 +48,7 @@ public class UsersService {
             credentials.passwordValidator().ifPresent(errors::add);
         }
         if (!errors.isEmpty()) {
-            return new ArrayList<>(errors.stream().map(ErrorResponse::new).collect(Collectors.toList()));
+            return errors.stream().map(ErrorResponse::new).collect(Collectors.toList());
         }
 
         final User userForUpdate = getUserById(id);
