@@ -5,9 +5,11 @@ import application.views.ErrorResponse.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
@@ -54,19 +56,29 @@ public class User {
     }
 
 
-    public @Nullable ErrorResponse emailValidator() {
-        final Pattern pattern = Pattern.compile("^[.a-z0-9_-]+@[a-z0-9_.-]+\\.[a-z]{2,6}$");
-        return !pattern.matcher(email).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_EMAIL) : null;
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[.a-z0-9_-]+@[a-z0-9_.-]+\\.[a-z]{2,6}$");
+    private static final Pattern LOGIN_PATTERN = Pattern.compile("^[\\w\\d]{3,20}$");
+    private static final Pattern PWD_PATTERN = Pattern.compile("^\\S{3,30}$");
+
+    public @NotNull Optional<ErrorCode> emailValidator() {
+        if(!EMAIL_PATTERN.matcher(email).matches()) {
+            return Optional.of(ErrorCode.NOT_VALID_EMAIL);
+        }
+        return Optional.empty();
     }
 
-    public @Nullable ErrorResponse loginValidator() {
-        final Pattern pattern = Pattern.compile("^[\\w\\d]{3,20}$");
-        return !pattern.matcher(login).matches() ?  new ErrorResponse(ErrorCode.NOT_VALID_LOGIN) : null;
+    public @NotNull Optional<ErrorCode> loginValidator() {
+        if(!LOGIN_PATTERN.matcher(login).matches()) {
+            return Optional.of(ErrorCode.NOT_VALID_LOGIN);
+        }
+        return Optional.empty();
     }
 
-    public @Nullable ErrorResponse passwordValidator() {
-        final Pattern pattern = Pattern.compile("^\\S{3,30}$");
-        return !pattern.matcher(password).matches() ? new ErrorResponse(ErrorCode.NOT_VALID_PWD) : null;
+    public @NotNull Optional<ErrorCode> passwordValidator() {
+        if(!PWD_PATTERN.matcher(password).matches()) {
+            return Optional.of(ErrorCode.NOT_VALID_PWD);
+        }
+        return Optional.empty();
     }
 
 

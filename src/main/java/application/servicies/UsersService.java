@@ -3,7 +3,6 @@ package application.servicies;
 import application.models.User;
 import application.views.ErrorResponse;
 import application.views.ErrorResponse.ErrorCode;
-import application.views.ErrorResponseList;
 import application.views.RecordResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersService {
@@ -19,44 +19,41 @@ public class UsersService {
 
 
     public List<ErrorResponse> create(User credentials) {
-        final ErrorResponseList errors = new ErrorResponseList();
-        errors
-                .add(credentials.emailValidator())
-                .add(credentials.loginValidator())
-                .add(credentials.passwordValidator());
+        final List<ErrorCode> errors = new ArrayList<>();
+        credentials.emailValidator().ifPresent(errors::add);
+        credentials.loginValidator().ifPresent(errors::add);
+        credentials.passwordValidator().ifPresent(errors::add);
 
-        if (!errors.getList().isEmpty()) {
-            return errors.getList();
+        if (!errors.isEmpty()) {
+            return new ArrayList<>(errors.stream().map(ErrorResponse::new).collect(Collectors.toList()));
         }
         for(User u : users.values()) {
             if (u.getLogin().equals(credentials.getLogin())) {
-                errors.add(new ErrorResponse(ErrorCode.USER_DUPLICATE));
-                return errors.getList();
+                return new ErrorResponse(ErrorCode.USER_DUPLICATE).toList();
             }
         }
 
         credentials.setPassword(hashpw(credentials.getPassword()));
         users.put(credentials.getId(), credentials);
-        return errors.getList();
+        return new ArrayList<>();          // Возвращаяю пустой список ошибок
     }
 
 
     public List<ErrorResponse> update(Long id, User credentials) {
-        final ErrorResponseList errors = new ErrorResponseList();
+        final List<ErrorCode> errors = new ArrayList<>();
         if (credentials.getEmail() != null) {
-            errors.add(credentials.emailValidator());
+            credentials.emailValidator().ifPresent(errors::add);
         }
         if (credentials.getPassword() != null) {
-            errors.add(credentials.passwordValidator());
+            credentials.passwordValidator().ifPresent(errors::add);
         }
-        if (!errors.getList().isEmpty()) {
-            return errors.getList();
+        if (!errors.isEmpty()) {
+            return new ArrayList<>(errors.stream().map(ErrorResponse::new).collect(Collectors.toList()));
         }
 
         final User userForUpdate = getUserById(id);
         if (userForUpdate == null) {
-            errors.add(new ErrorResponse(ErrorCode.USER_NOT_FOUND));
-            return errors.getList();
+            return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
 
         if (credentials.getEmail() != null) {
@@ -67,7 +64,7 @@ public class UsersService {
             userForUpdate.setPassword(hashpw(credentials.getPassword()));
             userForUpdate.setUpdatedDate();
         }
-        return errors.getList();
+        return new ArrayList<>();          // Возвращаяю пустой список ошибок
     }
 
 
