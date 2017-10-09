@@ -1,0 +1,20 @@
+language: java
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+  - dev
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: f0a29ee3-64f1-498d-8ec1-2a909777eaf3
+  app: bubblerise-backend
+  on:
+    repo: java-park-mail-ru/Brainstorm-09-2017
+    branch: dev
+  skip_cleanup: true
+
+install:
+  - mvn clean install
