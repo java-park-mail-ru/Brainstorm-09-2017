@@ -1,9 +1,23 @@
 package application.models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class UserTest {
+    private User credentials;
+
+
+    @Before
+    public void setup(){
+        credentials = new User(null, "login", "password", "user@mail.ru");
+    }
+
+
     private void notValidEmailTest(String email) {
         final User validUser = new User(null, null, null, email);
         assertTrue("Не выдало ошибки на " + email, validUser.emailValidator().isPresent());
@@ -55,5 +69,18 @@ public class UserTest {
         notValidPwdTest("Pa");
         notValidPwdTest("VeryLoooooooooooooooooongString");
         notValidPwdTest("");
+    }
+
+
+    @Test
+    public void testUser() throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String jsonUser = objectMapper.writeValueAsString(credentials);
+        final User user = objectMapper.readValue(jsonUser, User.class);
+        assertNotNull(user);
+        assertEquals(credentials.getId(), user.getId());
+        assertEquals(credentials.getEmail(), user.getEmail());
+        assertEquals(credentials.getLogin(), user.getLogin());
+        assertNull("Пароль не должен выдаваться в json", user.getPassword());
     }
 }

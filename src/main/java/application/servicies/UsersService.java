@@ -11,11 +11,12 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class UsersService {
-    private HashMap<Long, User> users = new HashMap<>();
+    private Map<Long, User> users = new HashMap<>();
 
 
     public List<ErrorResponse> create(User credentials) {

@@ -19,7 +19,7 @@ public class User {
     private Long id;
     @JsonProperty("login")
     private String login;
-    @JsonProperty("password")
+    @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     private String  password;
     @JsonProperty("email")
     private String email;
