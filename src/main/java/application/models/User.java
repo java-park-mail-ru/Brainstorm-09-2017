@@ -94,7 +94,9 @@ public class User {
     public String getEmail() { return email; }
     public Long getNumberOfGames() { return numberOfGames; }
     public Long getRecord() { return record; }
+    @JsonIgnore
     public Timestamp getCreated() { return created; }
+    @JsonIgnore
     public Timestamp getUpdated() { return updated; }
 
     public void setPassword(String password) { this.password = password; }
@@ -102,4 +104,14 @@ public class User {
     public void setRecord(Long record) { this.record = record; }
 
     public void incNumberOfGames() { this.numberOfGames++; }
+
+    @JsonProperty("created")
+    public String getCreatedAsString() {
+        return created.toString();
+    }
+
+    @JsonProperty("updated")
+    public String getUpdatedAsString() {
+        return updated.toString();
+    }
 }
