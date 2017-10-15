@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 
@@ -46,7 +44,7 @@ public class UsersControllerTest {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         app = retrofit.create(Application.class);
-        credentials = new User(null, "loginUCS" + ID_GENERATOR.getAndIncrement(), "password", "user@mail.ru");
+        credentials = new User( "loginUCS" + ID_GENERATOR.getAndIncrement(), "password", "user@mail.ru");
     }
 
 

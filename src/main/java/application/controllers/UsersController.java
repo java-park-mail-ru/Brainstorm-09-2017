@@ -89,6 +89,6 @@ public class UsersController {
 
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
-        return usersService.getUserById(userId);
+        return usersService.findUserById(userId);
     }
 }
