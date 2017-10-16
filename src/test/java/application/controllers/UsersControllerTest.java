@@ -1,5 +1,6 @@
 package application.controllers;
 
+import application.models.User;
 import application.servicies.UsersService;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UsersControllerTest {
     @Autowired
     private UsersService usersService;
-
     @Autowired
     private MockMvc mockMvc;
+    private User existingUser;
 
     @Before
-    public void setup(){
+    public void setup() {
         usersService.clearDB();
+        usersService.create(new User("ExistingUser", "password", "existing-user@mail.ru"));
+        existingUser = usersService.findUserByLogin("ExistingUser");
+        assert existingUser != null;
+        existingUser.setPassword("password");
     }
 
 
@@ -52,12 +57,15 @@ public class UsersControllerTest {
 
     @Test
     public void testUnsuccesSignupLoginAlreadyInUse() throws Exception {
-        testSignup();
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"login\":\"login\", \"password\":\"password\", \"email\":\"user@mail.ru\"}"))
+                .content("{\"login\":\"" + existingUser.getLogin() + "\", "
+                        + "\"password\":\"" + existingUser.getPassword() + "\", "
+                        + "\"email\":\"" + existingUser.getEmail() + "\"}"))
                 .andExpect(status().isBadRequest());
     }
+
+
 
 //
 //
