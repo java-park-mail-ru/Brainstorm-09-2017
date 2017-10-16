@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings({"InstanceMethodNamingConvention"})
@@ -59,14 +60,19 @@ public class UsersControllerTest {
     public void testUnsuccesSignupLoginAlreadyInUse() throws Exception {
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"login\":\"" + existingUser.getLogin() + "\", "
-                        + "\"password\":\"" + existingUser.getPassword() + "\", "
-                        + "\"email\":\"" + existingUser.getEmail() + "\"}"))
+                .content("{\"login\":\"" + existingUser.getLogin() + "\", \"password\":\"Password\", \"email\":\"user@mail.ru\"}"))
                 .andExpect(status().isBadRequest());
     }
 
 
-
+    @Test
+    public void testSuccessGetCurrentUser() throws Exception {
+        mockMvc.perform(get("/api/users/me")
+                .sessionAttr("userId", existingUser.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("login").value(existingUser.getLogin()))
+                .andExpect(jsonPath("email").value(existingUser.getEmail()));
+    }
 //
 //
 //    @Test
