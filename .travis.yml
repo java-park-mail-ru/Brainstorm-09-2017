@@ -5,10 +5,10 @@ jdk:
 services:
   - postgresql
 
-before_script:
-  - psql -c "create user bubblerise with password '123456';" -U postgres
-  - psql -c "create database bubblerise;" -U postgres
-  - psql -c "grant all on database bubblerise to bubblerise;" -U postgres
+before_install:
+  - psql -c "CREATE USER bubblerise WITH SUPERUSER PASSWORD '123456';" -U postgres
+  - psql -c "CREATE DATABASE bubblerise;" -U postgres
+  - psql -c "GRANT ALL ON DATABASE bubblerise TO bubblerise;" -U postgres
 
 branches:
   only:
