@@ -106,12 +106,12 @@ public class User {
     public void incNumberOfGames() { this.numberOfGames++; }
 
     @JsonProperty("created")
-    public String getCreatedAsString() {
-        return created.toString();
+    public @Nullable String getCreatedAsString() {
+        return created == null ? null : created.toString();
     }
 
     @JsonProperty("updated")
-    public String getUpdatedAsString() {
-        return updated.toString();
+    public @Nullable String getUpdatedAsString() {
+        return updated == null ? null : updated.toString();
     }
 }
