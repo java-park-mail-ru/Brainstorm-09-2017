@@ -87,23 +87,56 @@ public class User {
     }
 
 
-    public Long getId() { return id; }
-    public String getLogin() { return login;  }
-    @JsonIgnore
-    public String getPassword() { return password; }
-    public String getEmail() { return email; }
-    public Long getNumberOfGames() { return numberOfGames; }
-    public Long getRecord() { return record; }
-    @JsonIgnore
-    public Timestamp getCreated() { return created; }
-    @JsonIgnore
-    public Timestamp getUpdated() { return updated; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setPassword(String password) { this.password = password; }
-    public void setEmail(String email) { this.email = email; }
-    public void setRecord(Long record) { this.record = record; }
+    public String getLogin() {
+        return login;
+    }
 
-    public void incNumberOfGames() { this.numberOfGames++; }
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Long getNumberOfGames() {
+        return numberOfGames;
+    }
+
+    public Long getRecord() {
+        return record;
+    }
+
+    @JsonIgnore
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    @JsonIgnore
+    public Timestamp getUpdated() {
+        return updated;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRecord(Long record) {
+        this.record = record;
+    }
+
+    public void incNumberOfGames() {
+        this.numberOfGames++;
+    }
 
     @JsonProperty("created")
     public @Nullable String getCreatedAsString() {
