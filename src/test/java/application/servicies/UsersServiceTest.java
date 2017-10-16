@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -73,7 +72,7 @@ public class UsersServiceTest {
         final User createdUser = create(credentials);
         final User newCredentials = new User( null, "newPassword", "newuser@mail.ru");
         final User updatedUser = update(createdUser.getId(), newCredentials);
-        assertTrue("Пароль не изменился при обновлении пароля и почты", usersService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
+        assertTrue("Пароль не изменился при обновлении пароля и почты", UsersService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
         assertEquals("Почта не изменилась при обновлении пароля и почты", updatedUser.getEmail(), newCredentials.getEmail());
 
         // Тесты на валидацию
@@ -88,7 +87,7 @@ public class UsersServiceTest {
         final User createdUser = create(credentials);
         final User newCredentials = new User( null, "newPassword", null);
         final User updatedUser = update(createdUser.getId(), newCredentials);
-        assertTrue("Пароль не изменился при обновлении пароля", usersService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
+        assertTrue("Пароль не изменился при обновлении пароля", UsersService.checkpw(newCredentials.getPassword(), updatedUser.getPassword()));
 
         // Тесты на валидацию
         final User notValidUser = new User( null, "pass word", null);

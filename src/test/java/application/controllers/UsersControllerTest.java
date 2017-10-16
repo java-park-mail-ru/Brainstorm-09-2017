@@ -98,6 +98,16 @@ public class UsersControllerTest {
 
 
     @Test
+    public void testSuccessChangePassword() throws Exception {
+        mockMvc.perform(patch("/api/users/me")
+                .sessionAttr("userId", existingUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"password\":\"newPassword\"}"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
     public void testUnsuccessChangeInvalidPassword() throws Exception {
         mockMvc.perform(patch("/api/users/me")
                 .sessionAttr("userId", existingUser.getId())
