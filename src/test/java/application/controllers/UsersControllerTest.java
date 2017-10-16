@@ -15,9 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SuppressWarnings({"InstanceMethodNamingConvention"})
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -30,6 +32,7 @@ public class UsersControllerTest {
     private MockMvc mockMvc;
     private User existingUser;
 
+
     @Before
     public void setup() {
         usersService.clearDB();
@@ -37,13 +40,6 @@ public class UsersControllerTest {
         existingUser = usersService.findUserByLogin("ExistingUser");
         assert existingUser != null;
         existingUser.setPassword("password");
-    }
-
-
-    @Test
-    public void testMeRequiresLogin() throws Exception {
-        mockMvc.perform(get("/api/users/me"))
-                .andExpect(status().isUnauthorized());
     }
 
 
@@ -72,6 +68,32 @@ public class UsersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("login").value(existingUser.getLogin()))
                 .andExpect(jsonPath("email").value(existingUser.getEmail()));
+    }
+
+
+    @Test
+    public void testUnsuccessGetCurrentUserRequiresLogin() throws Exception {
+        mockMvc.perform(get("/api/users/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    public void testUnsuccessUpdateUserUnauthorized() throws Exception {
+        mockMvc.perform(patch("/api/users/me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"test@mail.ru\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    public void testUnsuccessChangeInvalidEmail() throws Exception {
+        mockMvc.perform(patch("/api/users/me")
+                .sessionAttr("userId", existingUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"invalid@email\"}"))
+                .andExpect(status().isBadRequest());
     }
 //
 //
