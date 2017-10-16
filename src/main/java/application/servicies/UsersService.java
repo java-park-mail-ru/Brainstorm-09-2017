@@ -59,12 +59,10 @@ public class UsersService {
             return errors.stream().map(ErrorResponse::new).collect(Collectors.toList());
         }
 
-        credentials.setPassword(hashpw(credentials.getPassword()));
-
         final GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", credentials.getLogin());
-        params.addValue("password", credentials.getPassword());
+        params.addValue("password", hashpw(credentials.getPassword()));
         params.addValue("email", credentials.getEmail());
         try {
             template.update("INSERT INTO person(login, password, email)"
@@ -157,7 +155,7 @@ public class UsersService {
     }
 
 
-    public Boolean checkpw(String pwd, String storedHash) {
+    public static Boolean checkpw(String pwd, String storedHash) {
         return BCrypt.checkpw(pwd, storedHash);
     }
 

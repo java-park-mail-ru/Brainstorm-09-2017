@@ -114,9 +114,29 @@ public class UsersServiceTest {
     public static User userExistingCheck(UsersService usersService, User user) {
         final User createdUser = usersService.findUserByLogin(user.getLogin());
         assertNotNull("Пользователь не был создан", createdUser);
-        assertEquals("Логин не совпал", createdUser.getLogin(), user.getLogin());
-        assertEquals("Пароль не совпал", createdUser.getPassword(), user.getPassword());
-        assertEquals("Почта не совпала", createdUser.getEmail(), user.getEmail());
+        assertUsersEquals(user, createdUser);
         return createdUser;
+    }
+
+
+    public static void assertUsersEquals(User credentials, User storedUser) {
+        assertEquals("Логин не совпал", credentials.getLogin(), storedUser.getLogin());
+        assertTrue("Пароль не совпал", UsersService.checkpw(credentials.getPassword(), storedUser.getPassword()));
+        assertEquals("Почта не совпала", credentials.getEmail(), storedUser.getEmail());
+    }
+
+
+    @Test
+    public void testAuth() {
+        create(credentials);
+        User res = usersService.auth(credentials);
+        assertNotNull(res);
+        assertUsersEquals(credentials, res);
+
+        res = usersService.auth(new User(credentials.getLogin(), "otherPassword", null));
+        assertNull("Авторизовался с неверным паролем", res);
+
+        res = usersService.auth(new User("otherLogin", credentials.getPassword(), null));
+        assertNull("Авторизовался с неверным логином", res);
     }
 }
