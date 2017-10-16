@@ -160,4 +160,9 @@ public class UsersService {
     public Boolean checkpw(String pwd, String storedHash) {
         return BCrypt.checkpw(pwd, storedHash);
     }
+
+
+    public void clearDB() {
+        template.update("TRUNCATE TABLE person CASCADE", new MapSqlParameterSource());
+    }
 }

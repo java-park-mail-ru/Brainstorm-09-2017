@@ -22,12 +22,11 @@ public class UsersServiceTest {
     private UsersService usersService;
     private User credentials;
 
-    private static final AtomicLong ID_GENERATOR = new AtomicLong();
-
 
     @Before
     public void setup(){
-        credentials = new User( "login" + ID_GENERATOR.getAndIncrement(), "password", "user@mail.ru");
+        usersService.clearDB();
+        credentials = new User( "login", "password", "user@mail.ru");
     }
 
 
@@ -46,15 +45,15 @@ public class UsersServiceTest {
         assertFalse("Не выдало ошибки об существовании такого же пользователя", errors.isEmpty());
 
         // Тесты на валидацию
-        User notValidUser = new User( "log *-in" + ID_GENERATOR.getAndIncrement(), "password", "user@mail.ru");
+        User notValidUser = new User( "log *-in", "password", "user@mail.ru");
         errors = usersService.create(notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность логина", errors.isEmpty());
 
-        notValidUser = new User( "login" + ID_GENERATOR.getAndIncrement(), "pass word", "user@mail.ru");
+        notValidUser = new User( "login1", "pass word", "user@mail.ru");
         errors = usersService.create(notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность пароля", errors.isEmpty());
 
-        notValidUser = new User( "login" + ID_GENERATOR.getAndIncrement(), "password", "usermail.ru");
+        notValidUser = new User( "login2", "password", "usermail.ru");
         errors = usersService.create(notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность почты", errors.isEmpty());
     }
