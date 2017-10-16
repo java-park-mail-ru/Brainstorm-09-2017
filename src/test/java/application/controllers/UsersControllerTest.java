@@ -1,57 +1,42 @@
 package application.controllers;
 
-import application.models.User;
-import application.views.SuccessResponse;
+import application.servicies.UsersService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.POST;
-import retrofit2.converter.jackson.JacksonConverterFactory;
-
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static org.junit.Assert.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @RunWith(SpringRunner.class)
+@AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 public class UsersControllerTest {
-    @LocalServerPort
-    private int localPort;
-    @Mock
-    private User credentials;
-    private static final AtomicLong ID_GENERATOR = new AtomicLong();
-    private Application app;
+    @Autowired
+    private UsersService usersService;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Before
     public void setup(){
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:" + localPort)
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build();
-        app = retrofit.create(Application.class);
-        credentials = new User( "loginUCS" + ID_GENERATOR.getAndIncrement(), "password", "user@mail.ru");
+        usersService.clearDB();
     }
 
 
     @Test
-    public void testMeRequiresLogin() throws IOException {
-        final Response<User> response = app.currentUser().execute();
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.code());
+    public void testMeRequiresLogin() throws Exception {
+        mockMvc
+                .perform(get("/api/users/me"))
+                .andExpect(status().isUnauthorized());
     }
 
 // FIXME
@@ -78,19 +63,4 @@ public class UsersControllerTest {
 //        final String coockie = response.headers().get("Set-Cookie");
 //        assertNotNull(coockie);
 //    }
-
-
-    public interface Application {
-        @GET("/api/users/me")
-        Call<User> currentUser();
-
-        @GET("/api/users/me")
-        Call<User> currentUser(@Header("Cookie") String cookie);
-
-        @POST("/api/users")
-        Call<SuccessResponse> signup(@Body User user);
-
-        @POST("/api/users/signin")
-        Call<SuccessResponse> signin(@Body User user);
-    }
 }
