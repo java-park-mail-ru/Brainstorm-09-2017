@@ -125,21 +125,14 @@ public class UsersControllerTest {
                 .content("{\"password\":\"pw\"}"))
                 .andExpect(status().isBadRequest());
     }
-//
-//
-//    @Test
-//    public void testSignin() throws IOException {
-//        login();
-//    }
 
 
-//    private void login() throws IOException {
-//        testSignup();
-//
-//        final Response<SuccessResponse> response = app.signin(credentials).execute();
-//        assertEquals(HttpStatus.OK.value(), response.code());
-//
-//        final String coockie = response.headers().get("Set-Cookie");
-//        assertNotNull(coockie);
-//    }
+    @Test
+    public void testSuccessSignin() throws Exception {
+        mockMvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"login\":\"" + existingUser.getLogin() + "\", "
+                        + "\"password\":\"" + existingUser.getPassword() + "\"}"))
+                .andExpect(status().isOk());
+    }
 }
