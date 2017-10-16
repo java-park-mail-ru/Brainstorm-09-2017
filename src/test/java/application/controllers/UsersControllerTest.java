@@ -95,6 +95,16 @@ public class UsersControllerTest {
                 .content("{\"email\":\"invalid@email\"}"))
                 .andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    public void testUnsuccessChangeInvalidPassword() throws Exception {
+        mockMvc.perform(patch("/api/users/me")
+                .sessionAttr("userId", existingUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"password\":\"pw\"}"))
+                .andExpect(status().isBadRequest());
+    }
 //
 //
 //    @Test
