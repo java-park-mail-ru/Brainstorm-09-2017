@@ -3,8 +3,6 @@ package application.views;
 import application.models.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Comparator;
-import java.util.Objects;
 
 public class RecordResponse {
     @JsonProperty("top_position") private Long  topPosition;
@@ -14,10 +12,10 @@ public class RecordResponse {
 
 
     public RecordResponse(Long topPosition, User user) {
-        topPosition = topPosition;
-        login = user.getLogin();
-        numberOfGames = user.getNumberOfGames();
-        record = user.getRecord();
+        this.topPosition = topPosition;
+        this.login = user.getLogin();
+        this.numberOfGames = user.getNumberOfGames();
+        this.record = user.getRecord();
     }
 
     public RecordResponse(Long topPosition, String login, Long numberOfGames, Long record) {

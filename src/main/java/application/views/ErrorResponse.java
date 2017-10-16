@@ -34,7 +34,9 @@ public class ErrorResponse {
             return msg;
         }
 
-        public Integer getCode() { return code; }
+        public Integer getCode() {
+            return code;
+        }
     }
 
 
@@ -68,6 +70,7 @@ public class ErrorResponse {
     public Integer getCode() {
         return code;
     }
+
     public String getMsg() {
         return msg;
     }

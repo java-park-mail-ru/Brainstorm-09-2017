@@ -66,21 +66,21 @@ public class User {
     private static final Pattern PWD_PATTERN = Pattern.compile("^\\S{3,30}$");
 
     public @NotNull Optional<ErrorCode> emailValidator() {
-        if(!EMAIL_PATTERN.matcher(email).matches()) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             return Optional.of(ErrorCode.NOT_VALID_EMAIL);
         }
         return Optional.empty();
     }
 
     public @NotNull Optional<ErrorCode> loginValidator() {
-        if(!LOGIN_PATTERN.matcher(login).matches()) {
+        if (!LOGIN_PATTERN.matcher(login).matches()) {
             return Optional.of(ErrorCode.NOT_VALID_LOGIN);
         }
         return Optional.empty();
     }
 
     public @NotNull Optional<ErrorCode> passwordValidator() {
-        if(!PWD_PATTERN.matcher(password).matches()) {
+        if (!PWD_PATTERN.matcher(password).matches()) {
             return Optional.of(ErrorCode.NOT_VALID_PWD);
         }
         return Optional.empty();

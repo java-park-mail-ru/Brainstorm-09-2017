@@ -146,8 +146,8 @@ public class UsersService {
 
 
     public List<RecordResponse> getRecords() {
-        return template.query("SELECT login, number_of_games, record FROM person WHERE record > 0 " +
-                        "ORDER BY record DESC, number_of_games LIMIT 30", RECORD_MAPPER
+        return template.query("SELECT login, number_of_games, record FROM person WHERE record > 0 "
+                + "ORDER BY record DESC, number_of_games LIMIT 30", RECORD_MAPPER
         );
     }
 
