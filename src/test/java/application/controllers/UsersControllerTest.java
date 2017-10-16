@@ -88,6 +88,16 @@ public class UsersControllerTest {
 
 
     @Test
+    public void testSuccessChangeEmail() throws Exception {
+        mockMvc.perform(patch("/api/users/me")
+                .sessionAttr("userId", existingUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"new-email@mail.ru\"}"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
     public void testUnsuccessChangeInvalidEmail() throws Exception {
         mockMvc.perform(patch("/api/users/me")
                 .sessionAttr("userId", existingUser.getId())
