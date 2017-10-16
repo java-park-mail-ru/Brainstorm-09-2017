@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar target/dependency/BubbleRise.jar --port $PORT --spring.profiles.active=heroku target/*.war
+web:    java $JAVA_OPTS -jar target/dependency/bubblerise.jar --port $PORT --spring.profiles.active=heroku target/*.war
