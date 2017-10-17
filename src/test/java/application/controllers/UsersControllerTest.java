@@ -138,6 +138,22 @@ public class UsersControllerTest {
 
 
     @Test
+    public void testUnsuccessSignin() throws Exception {
+        mockMvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"login\":\"" + existingUser.getLogin() + "\", "
+                        + "\"password\":\"BadPassword\"}"))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/api/users/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"login\":\"BadLogin\", "
+                        + "\"password\":\"password\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     public void testRecords() throws Exception {
         mockMvc.perform(get("/api/users/records"))
                 .andExpect(status().isOk());
