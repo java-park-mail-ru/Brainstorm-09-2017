@@ -154,6 +154,14 @@ public class UsersControllerTest {
 
 
     @Test
+    public void testLogout() throws Exception {
+        mockMvc.perform(get("/api/users/me")
+                .sessionAttr("userId", existingUser.getId()))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
     public void testRecords() throws Exception {
         mockMvc.perform(get("/api/users/records"))
                 .andExpect(status().isOk());
