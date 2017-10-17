@@ -6,6 +6,8 @@ import application.views.ErrorResponse.ErrorCode;
 import application.views.RecordResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,14 +15,21 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@PropertySource("classpath:game.properties")
 public class UsersService {
     private final NamedParameterJdbcTemplate template;
+
+    @Value("${game.topRecordsCount}")
+    private Integer topRecordsCount;
 
 
     @Autowired
@@ -49,7 +58,7 @@ public class UsersService {
     );
 
 
-    public List<ErrorResponse> create(User credentials) {
+    public List create(User credentials) {
         final List<ErrorCode> errors = new ArrayList<>();
         credentials.emailValidator().ifPresent(errors::add);
         credentials.loginValidator().ifPresent(errors::add);
@@ -67,19 +76,18 @@ public class UsersService {
         try {
             template.update("INSERT INTO person(login, password, email)"
                     + " VALUES (:login,:password,:email) RETURNING id", params, keyHolder);
-            return new ArrayList<>();          // Возвращаяю пустой список ошибок
+            return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
         } catch (DuplicateKeyException e) {
             return new ErrorResponse(ErrorCode.USER_DUPLICATE).toList();
         }
     }
 
 
-    public List<ErrorResponse> update(Long id, User credentials) {
+    public List update(Long id, User credentials) {
         // Проверяю, что есть что-то на изменение
         if (credentials.getEmail() == null && credentials.getPassword() == null) {
             return new ErrorResponse(ErrorCode.NOTHING_TO_CHANGE).toList();
         }
-
         final List<ErrorCode> errors = new ArrayList<>();
         if (credentials.getEmail() != null) {
             credentials.emailValidator().ifPresent(errors::add);
@@ -104,18 +112,17 @@ public class UsersService {
         }
         final Integer count = template.update("UPDATE person SET " + values + "updated = now() WHERE id=:id", params);
 
-        if (count != 1) {
+        if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
-
-        return new ArrayList<>();          // Возвращаяю пустой список ошибок
+        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
     }
 
 
     public @Nullable User findUserById(Long id) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
-        final List<User> res = template.query("SELECT * FROM person WHERE id=:id LIMIT 1", params, USER_MAPPER);
+        final List<User> res = template.query("SELECT * FROM person WHERE id = :id LIMIT 1", params, USER_MAPPER);
         if (res.isEmpty()) {
             return null;
         }
@@ -126,7 +133,7 @@ public class UsersService {
     public @Nullable User findUserByLogin(String login) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", login);
-        final List<User> res = template.query("SELECT * FROM person WHERE login=:login LIMIT 1", params, USER_MAPPER);
+        final List<User> res = template.query("SELECT * FROM person WHERE login = :login", params, USER_MAPPER);
         if (res.isEmpty()) {
             return null;
         }
@@ -145,7 +152,7 @@ public class UsersService {
 
     public List<RecordResponse> getRecords() {
         return template.query("SELECT login, number_of_games, record FROM person WHERE record > 0 "
-                + "ORDER BY record DESC, number_of_games LIMIT 30", RECORD_MAPPER
+                + "ORDER BY record DESC, number_of_games LIMIT " + topRecordsCount, RECORD_MAPPER
         );
     }
 
@@ -160,7 +167,7 @@ public class UsersService {
     }
 
 
-    public void clearDB() {
+    void clearDB() {
         template.update("TRUNCATE TABLE person CASCADE", new MapSqlParameterSource());
     }
 }

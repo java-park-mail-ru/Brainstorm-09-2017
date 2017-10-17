@@ -2,7 +2,9 @@ package application.servicies;
 
 import application.models.User;
 import application.views.ErrorResponse;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,19 @@ public class UsersServiceTest {
 
 
     @Before
-    public void setup(){
-        usersService.clearDB();
+    public void setup() {
         credentials = new User( "login", "password", "user@mail.ru");
     }
 
 
+    @After
+    public void after() {
+        usersService.clearDB();
+    }
+
+
     private User create(User user) {
-        final List<ErrorResponse> errors = usersService.create(user);
+        final List errors = usersService.create(user);
         assertTrue(errors.toString(), errors.isEmpty());
         return userExistingCheck(usersService, user);
     }
@@ -40,7 +47,7 @@ public class UsersServiceTest {
     public void testCreate() {
         create(credentials);
 
-        List<ErrorResponse> errors = usersService.create(credentials);
+        List errors = usersService.create(credentials);
         assertFalse("Не выдало ошибки об существовании такого же пользователя", errors.isEmpty());
 
         // Тесты на валидацию
@@ -59,7 +66,7 @@ public class UsersServiceTest {
 
 
     private User update(Long id, User newCredentials) {
-        final List<ErrorResponse> errors = usersService.update(id, newCredentials);
+        final List errors = usersService.update(id, newCredentials);
         assertTrue(errors.toString(), errors.isEmpty());
         final User updatedUser = usersService.findUserById(id);
         assertNotNull("Пользователь был удалён", updatedUser);
@@ -77,7 +84,7 @@ public class UsersServiceTest {
 
         // Тесты на валидацию
         final User notValidUser = new User( null, "pass word", "Usermail.ru");
-        final List<ErrorResponse> errors = usersService.update(credentials.getId(), notValidUser);
+        final List errors = usersService.update(credentials.getId(), notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность", errors.isEmpty());
     }
 
@@ -91,7 +98,7 @@ public class UsersServiceTest {
 
         // Тесты на валидацию
         final User notValidUser = new User( null, "pass word", null);
-        final List<ErrorResponse> errors = usersService.update(credentials.getId(), notValidUser);
+        final List errors = usersService.update(credentials.getId(), notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность", errors.isEmpty());
     }
 
@@ -105,7 +112,7 @@ public class UsersServiceTest {
 
         // Тесты на валидацию
         final User notValidUser = new User( null, "password", "newuser@mailru");
-        final List<ErrorResponse> errors = usersService.update(credentials.getId(), notValidUser);
+        final List errors = usersService.update(credentials.getId(), notValidUser);
         assertFalse("Не выдало ошибки при проверки на валидность", errors.isEmpty());
     }
 

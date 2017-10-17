@@ -30,7 +30,7 @@ public class UsersController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity signup(@RequestBody User user) {
-        final List<ErrorResponse> errors = usersService.create(user);
+        final List errors = usersService.create(user);
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
@@ -66,7 +66,7 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
 
-        final List<ErrorResponse> errors = usersService.update(user.getId(), body);
+        final List errors = usersService.update(user.getId(), body);
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }

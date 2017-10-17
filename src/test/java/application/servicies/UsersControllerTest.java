@@ -1,7 +1,7 @@
-package application.controllers;
+package application.servicies;
 
 import application.models.User;
-import application.servicies.UsersService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,11 +35,16 @@ public class UsersControllerTest {
 
     @Before
     public void setup() {
-        usersService.clearDB();
         usersService.create(new User("ExistingUser", "password", "existing-user@mail.ru"));
         existingUser = usersService.findUserByLogin("ExistingUser");
         assert existingUser != null;
         existingUser.setPassword("password");
+    }
+
+
+    @After
+    public void after() {
+        usersService.clearDB();
     }
 
 
