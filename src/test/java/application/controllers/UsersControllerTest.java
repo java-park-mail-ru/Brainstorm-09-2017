@@ -135,4 +135,11 @@ public class UsersControllerTest {
                         + "\"password\":\"" + existingUser.getPassword() + "\"}"))
                 .andExpect(status().isOk());
     }
+
+
+    @Test
+    public void testRecords() throws Exception {
+        mockMvc.perform(get("/api/users/records"))
+                .andExpect(status().isOk());
+    }
 }
