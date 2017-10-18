@@ -19,23 +19,6 @@ public class UserTest {
     }
 
 
-    private void notValidLoginTest(String login) {
-        final User validUser = new User( login, null, null);
-        assertTrue("Не выдало ошибки на " + login, validUser.loginValidator().isPresent());
-    }
-
-    @Test
-    public void testLoginValidator() {
-        final User validUser = new User( "Login123", null, null);
-        assertFalse("Не прошёл валидный логин Login123", validUser.loginValidator().isPresent());
-
-        notValidLoginTest("Log%^&.in123");
-        notValidLoginTest("Lo");
-        notValidLoginTest("VeryLoooooooongString");
-        notValidLoginTest("");
-    }
-
-
     private void notValidPwdTest(String pwd) {
         final User validUser = new User( null, pwd, null);
         assertTrue("Не выдало ошибки на " + pwd, validUser.passwordValidator().isPresent());
