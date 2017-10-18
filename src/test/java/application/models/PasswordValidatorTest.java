@@ -14,21 +14,21 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(value = Parameterized.class)
-public class LoginValidatorTest {
+public class PasswordValidatorTest {
     @Parameter(value = 0)
-    public String login;
+    public String pwd;
 
     @Parameter(value = 1)
     public Boolean isValidData;
 
 
     @Test
-    public void testLoginValidator() {
-        final User user = new User( login, null, null);
+    public void testPasswordValidator() {
+        final User user = new User( null, pwd, null);
         if (isValidData) {
-            assertFalse("Не прошла валидный логин " + login, user.loginValidator().isPresent());
+            assertFalse("Не прошла валидный пароль " + pwd, user.passwordValidator().isPresent());
         } else {
-            assertTrue("Не выдало ошибки на логин " + login, user.loginValidator().isPresent());
+            assertTrue("Не выдало ошибки на пароль " + pwd, user.passwordValidator().isPresent());
         }
     }
 
@@ -36,11 +36,11 @@ public class LoginValidatorTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"login", true},
-                {"Login123", true},
-                {"Log%^&.in123", false},
-                {"Lo", false},
-                {"VeryLoooooooongString", false},
+                {"password", true},
+                {"Password123_@#$", true},
+                {"Pass word 123", false},
+                {"Pa", false},
+                {"VeryLoooooooooooooooooongString", false},
                 {"", false}
         });
     }

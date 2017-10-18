@@ -33,7 +33,7 @@ public class EmailValidatorTest {
     }
 
 
-    @Parameters(name = "{index}: testAdd({0}+{1}) = {2}")
+    @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {"user@park.mail.ru", true},
