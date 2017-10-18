@@ -19,23 +19,6 @@ public class UserTest {
     }
 
 
-    private void notValidPwdTest(String pwd) {
-        final User validUser = new User( null, pwd, null);
-        assertTrue("Не выдало ошибки на " + pwd, validUser.passwordValidator().isPresent());
-    }
-
-    @Test
-    public void testPasswordValidator() {
-        final User validUser = new User( null, "Password123_@#$", null);
-        assertFalse("Не прошёл валидный пароль Password123_@#$", validUser.passwordValidator().isPresent());
-
-        notValidPwdTest("Pass word 123");
-        notValidPwdTest("Pa");
-        notValidPwdTest("VeryLoooooooooooooooooongString");
-        notValidPwdTest("");
-    }
-
-
     @Test
     public void testSerialization() throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
