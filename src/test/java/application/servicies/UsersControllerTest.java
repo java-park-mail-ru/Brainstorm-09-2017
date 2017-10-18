@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -37,7 +38,7 @@ public class UsersControllerTest {
     public void setup() {
         usersService.create(new User("ExistingUser", "password", "existing-user@mail.ru"));
         existingUser = usersService.findUserByLogin("ExistingUser");
-        assert existingUser != null;
+        assertNotNull(existingUser);
         existingUser.setPassword("password");
     }
 

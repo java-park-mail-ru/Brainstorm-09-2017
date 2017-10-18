@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -122,22 +123,22 @@ public class UsersService {
     public @Nullable User findUserById(Long id) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
-        final List<User> res = template.query("SELECT * FROM person WHERE id = :id LIMIT 1", params, USER_MAPPER);
-        if (res.isEmpty()) {
+        try {
+            return template.queryForObject("SELECT * FROM person WHERE id = :id", params, USER_MAPPER);
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        return res.get(0);
     }
 
 
     public @Nullable User findUserByLogin(String login) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", login);
-        final List<User> res = template.query("SELECT * FROM person WHERE login = :login", params, USER_MAPPER);
-        if (res.isEmpty()) {
+        try {
+            return template.queryForObject("SELECT * FROM person WHERE login = :login", params, USER_MAPPER);
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        return res.get(0);
     }
 
 
