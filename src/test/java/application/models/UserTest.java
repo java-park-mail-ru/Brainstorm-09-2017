@@ -19,26 +19,6 @@ public class UserTest {
     }
 
 
-    private void notValidEmailTest(String email) {
-        final User validUser = new User( null, null, email);
-        assertTrue("Не выдало ошибки на " + email, validUser.emailValidator().isPresent());
-    }
-
-    @Test
-    public void testEmailValidator() {
-        final User validUser = new User( null, null, "mr.super-user@park.mail.ru");
-        assertFalse("Не прошла валидная почта mr.super-user@park.mail.ru", validUser.emailValidator().isPresent());
-
-        notValidEmailTest("UpperCase@Mail.Ru");
-        notValidEmailTest("@mail.ru");
-        notValidEmailTest("mail.ru");
-        notValidEmailTest("%^&*&^@&mail.ru");
-        notValidEmailTest("%^&*&^@&$%^.ru");
-        notValidEmailTest("user@ru");
-        notValidEmailTest("");
-    }
-
-
     private void notValidLoginTest(String login) {
         final User validUser = new User( login, null, null);
         assertTrue("Не выдало ошибки на " + login, validUser.loginValidator().isPresent());
