@@ -46,7 +46,7 @@ public class UsersService {
             res.getString("email"),
             res.getLong("number_of_games"),
             res.getLong("record"),
-            res.getInt("template"),
+            res.getInt("theme"),
             res.getTimestamp("created"),
             res.getTimestamp("updated")
     );
@@ -159,11 +159,11 @@ public class UsersService {
     }
 
 
-    public List setTemplate(Long id, User body) {
+    public List setTheme(Long id, User body) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
-        params.addValue("template", body.getTemplate());
-        final Integer count = template.update("UPDATE person SET template = :template WHERE id = :id", params);
+        params.addValue("theme", body.getTheme());
+        final Integer count = template.update("UPDATE person SET theme = :theme WHERE id = :id", params);
 
         if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();

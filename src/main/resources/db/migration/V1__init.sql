@@ -7,7 +7,7 @@ CREATE TABLE person (
   email CITEXT COLLATE "en_US.utf8" NOT NULL,
   number_of_games INTEGER NOT NULL DEFAULT 0 CHECK (number_of_games >= 0),
   record INTEGER NOT NULL DEFAULT 0 CHECK (record >= 0),
-  template SMALLINT NOT NULL DEFAULT 0,
+  theme SMALLINT NOT NULL DEFAULT 0,
   created TIMESTAMP NOT NULL DEFAULT now(),
   updated TIMESTAMP NOT NULL DEFAULT now()
 );

@@ -175,20 +175,20 @@ public class UsersControllerTest {
 
 
     @Test
-    public void testSetTemplate() throws Exception {
-        mockMvc.perform(post("/api/users/template")
+    public void testSetTheme() throws Exception {
+        mockMvc.perform(post("/api/users/theme")
                 .sessionAttr("userId", existingUser.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"template\": 1 }"))
+                .content("{ \"theme\": 1 }"))
                 .andExpect(status().isOk());
     }
 
 
     @Test
-    public void testUnsuccesSetTemplateUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/users/template")
+    public void testUnsuccesSetThemeUnauthorized() throws Exception {
+        mockMvc.perform(post("/api/users/theme")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"template\": 1 }"))
+                .content("{ \"theme\": 1 }"))
                 .andExpect(status().isUnauthorized());
     }
 }

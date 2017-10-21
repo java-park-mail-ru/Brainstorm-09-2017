@@ -1,10 +1,8 @@
 package application.servicies;
 
 import application.models.User;
-import application.views.ErrorResponse;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,9 +151,9 @@ public class UsersServiceTest {
 
         final User body = new User(null, null, null, null, null,
                 null, 1, null, null);
-        final List errors = usersService.setTemplate(createdUser.getId(), body);
+        final List errors = usersService.setTheme(createdUser.getId(), body);
         assertTrue(errors.toString(), errors.isEmpty());
         final User updatedUser = userExistingCheck(usersService, credentials);
-        assertEquals("Шаблон не изменился", updatedUser.getTemplate(), body.getTemplate());
+        assertEquals("Шаблон не изменился", updatedUser.getTheme(), body.getTheme());
     }
 }

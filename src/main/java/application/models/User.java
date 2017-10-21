@@ -27,8 +27,8 @@ public class User {
     @JsonProperty("record")
     private Long record;
 
-    @JsonProperty("template")
-    private Integer template;
+    @JsonProperty("theme")
+    private Integer theme;
 
     @JsonProperty("created")
     private Timestamp created;
@@ -51,7 +51,7 @@ public class User {
                 @Nullable @JsonProperty("email") String email,
                 @Nullable @JsonProperty("numberOfGames") Long numberOfGames,
                 @Nullable @JsonProperty("record") Long record,
-                @Nullable @JsonProperty("template") Integer template,
+                @Nullable @JsonProperty("theme") Integer theme,
                 @Nullable @JsonProperty("created") Timestamp created,
                 @Nullable @JsonProperty("updated") Timestamp updated) {
         this.id = id;
@@ -60,7 +60,7 @@ public class User {
         this.email = email;
         this.numberOfGames = numberOfGames;
         this.record = record;
-        this.template = template;
+        this.theme = theme;
         this.created = created;
         this.updated = updated;
     }
@@ -143,12 +143,12 @@ public class User {
         this.numberOfGames++;
     }
 
-    public Integer getTemplate() {
-        return template;
+    public Integer getTheme() {
+        return theme;
     }
 
-    public void setTemplate(Integer template) {
-        this.template = template;
+    public void setTheme(Integer theme) {
+        this.theme = theme;
     }
 
     @JsonProperty("created")
