@@ -87,7 +87,7 @@ public class UsersController {
     }
 
 
-    @PostMapping(path = "/theme", produces = "application/json")
+    @PatchMapping(path = "/theme", produces = "application/json")
     public ResponseEntity setTheme(HttpSession httpSession, @RequestBody User body) {
         final User user = auth(httpSession);
         if (user == null) {

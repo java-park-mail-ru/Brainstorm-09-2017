@@ -176,7 +176,7 @@ public class UsersControllerTest {
 
     @Test
     public void testSetTheme() throws Exception {
-        mockMvc.perform(post("/api/users/theme")
+        mockMvc.perform(patch("/api/users/theme")
                 .sessionAttr("userId", existingUser.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"theme\": 1 }"))
@@ -186,7 +186,7 @@ public class UsersControllerTest {
 
     @Test
     public void testUnsuccesSetThemeUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/users/theme")
+        mockMvc.perform(patch("/api/users/theme")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"theme\": 1 }"))
                 .andExpect(status().isUnauthorized());

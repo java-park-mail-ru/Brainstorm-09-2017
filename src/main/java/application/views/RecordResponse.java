@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class RecordResponse {
-    @JsonProperty("top_position") private Long  topPosition;
+    @JsonProperty("topPosition") private Long  topPosition;
     @JsonProperty("login") private String  login;
     @JsonProperty("numberOfGames") private Long numberOfGames;
     @JsonProperty("record") private Long record;
