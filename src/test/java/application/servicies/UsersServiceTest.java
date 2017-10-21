@@ -119,7 +119,7 @@ public class UsersServiceTest {
 
     public static User userExistingCheck(UsersService usersService, User user) {
         final User createdUser = usersService.findUserByLogin(user.getLogin());
-        assertNotNull("Пользователь не был создан", createdUser);
+        assertNotNull("Пользователь не найден ", createdUser);
         assertUsersEquals(user, createdUser);
         return createdUser;
     }
@@ -144,5 +144,18 @@ public class UsersServiceTest {
 
         res = usersService.auth(new User("otherLogin", credentials.getPassword(), null));
         assertNull("Авторизовался с неверным логином", res);
+    }
+
+
+    @Test
+    public void testSetTemplate() {
+        final User createdUser = create(credentials);
+
+        final User body = new User(null, null, null, null, null,
+                null, 1, null, null);
+        final List errors = usersService.setTemplate(createdUser.getId(), body);
+        assertTrue(errors.toString(), errors.isEmpty());
+        final User updatedUser = userExistingCheck(usersService, credentials);
+        assertEquals("Шаблон не изменился", updatedUser.getTemplate(), body.getTemplate());
     }
 }

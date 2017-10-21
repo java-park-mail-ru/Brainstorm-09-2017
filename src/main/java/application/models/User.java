@@ -27,6 +27,9 @@ public class User {
     @JsonProperty("record")
     private Long record;
 
+    @JsonProperty("template")
+    private Integer template;
+
     @JsonProperty("created")
     private Timestamp created;
     @JsonProperty("updated")
@@ -48,6 +51,7 @@ public class User {
                 @Nullable @JsonProperty("email") String email,
                 @Nullable @JsonProperty("numberOfGames") Long numberOfGames,
                 @Nullable @JsonProperty("record") Long record,
+                @Nullable @JsonProperty("template") Integer template,
                 @Nullable @JsonProperty("created") Timestamp created,
                 @Nullable @JsonProperty("updated") Timestamp updated) {
         this.id = id;
@@ -56,6 +60,7 @@ public class User {
         this.email = email;
         this.numberOfGames = numberOfGames;
         this.record = record;
+        this.template = template;
         this.created = created;
         this.updated = updated;
     }
@@ -138,6 +143,14 @@ public class User {
         this.numberOfGames++;
     }
 
+    public Integer getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Integer template) {
+        this.template = template;
+    }
+
     @JsonProperty("created")
     public @Nullable String getCreatedAsString() {
         return created == null ? null : created.toString();
@@ -147,4 +160,6 @@ public class User {
     public @Nullable String getUpdatedAsString() {
         return updated == null ? null : updated.toString();
     }
+
+
 }

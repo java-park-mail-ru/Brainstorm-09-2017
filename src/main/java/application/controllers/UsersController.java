@@ -87,6 +87,21 @@ public class UsersController {
     }
 
 
+    @PostMapping(path = "/template", produces = "application/json")
+    public ResponseEntity setTemplate(HttpSession httpSession, @RequestBody User body) {
+        final User user = auth(httpSession);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
+        }
+
+        final List errors = usersService.setTemplate(user.getId(), body);
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return ResponseEntity.ok(new SuccessResponse("Success"));
+    }
+
+
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
         return usersService.findUserById(userId);

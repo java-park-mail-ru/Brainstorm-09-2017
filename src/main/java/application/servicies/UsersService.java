@@ -46,6 +46,7 @@ public class UsersService {
             res.getString("email"),
             res.getLong("number_of_games"),
             res.getLong("record"),
+            res.getInt("template"),
             res.getTimestamp("created"),
             res.getTimestamp("updated")
     );
@@ -156,6 +157,20 @@ public class UsersService {
                 + "ORDER BY record DESC, number_of_games LIMIT " + topRecordsCount, RECORD_MAPPER
         );
     }
+
+
+    public List setTemplate(Long id, User body) {
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        params.addValue("template", body.getTemplate());
+        final Integer count = template.update("UPDATE person SET template = :template WHERE id = :id", params);
+
+        if (count == 0) {
+            return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
+        }
+        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+    }
+
 
 
     private String hashpw(String pwd) {

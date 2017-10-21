@@ -172,4 +172,23 @@ public class UsersControllerTest {
         mockMvc.perform(get("/api/users/records"))
                 .andExpect(status().isOk());
     }
+
+
+    @Test
+    public void testSetTemplate() throws Exception {
+        mockMvc.perform(post("/api/users/template")
+                .sessionAttr("userId", existingUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"template\": 1 }"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testUnsuccesSetTemplateUnauthorized() throws Exception {
+        mockMvc.perform(post("/api/users/template")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"template\": 1 }"))
+                .andExpect(status().isUnauthorized());
+    }
 }
