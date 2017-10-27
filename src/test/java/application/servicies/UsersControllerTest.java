@@ -168,13 +168,6 @@ public class UsersControllerTest {
 
 
     @Test
-    public void testRecords() throws Exception {
-        mockMvc.perform(get("/api/users/records"))
-                .andExpect(status().isOk());
-    }
-
-
-    @Test
     public void testSetTheme() throws Exception {
         mockMvc.perform(patch("/api/users/theme")
                 .sessionAttr("userId", existingUser.getId())

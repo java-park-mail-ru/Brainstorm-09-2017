@@ -133,14 +133,14 @@ public class UsersServiceTest {
     @Test
     public void testAuth() {
         create(credentials);
-        User res = usersService.auth(credentials);
+        User res = usersService.login(credentials);
         assertNotNull(res);
         assertUsersEquals(credentials, res);
 
-        res = usersService.auth(new User(credentials.getLogin(), "otherPassword", null));
+        res = usersService.login(new User(credentials.getLogin(), "otherPassword", null));
         assertNull("Авторизовался с неверным паролем", res);
 
-        res = usersService.auth(new User("otherLogin", credentials.getPassword(), null));
+        res = usersService.login(new User("otherLogin", credentials.getPassword(), null));
         assertNull("Авторизовался с неверным логином", res);
     }
 

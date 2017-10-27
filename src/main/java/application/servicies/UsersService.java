@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -143,7 +144,7 @@ public class UsersService {
     }
 
 
-    public @Nullable User auth(User credentials) {
+    public @Nullable User login(User credentials) {
         final User user = findUserByLogin(credentials.getLogin());
         if (user == null || !checkpw(credentials.getPassword(), user.getPassword())) {
             return null;
@@ -185,5 +186,11 @@ public class UsersService {
 
     void clearDB() {
         template.update("TRUNCATE TABLE person CASCADE", new MapSqlParameterSource());
+    }
+
+
+    public @Nullable User auth(HttpSession httpSession) {
+        final Long userId = (Long) httpSession.getAttribute("userId");
+        return findUserById(userId);
     }
 }

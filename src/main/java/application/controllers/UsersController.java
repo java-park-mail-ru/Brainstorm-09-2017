@@ -40,7 +40,7 @@ public class UsersController {
 
     @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity signin(@RequestBody User credentials, HttpSession httpSession) {
-        final User user = usersService.auth(credentials);
+        final User user = usersService.login(credentials);
         if (user == null) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.AUTHORISATION_FAILED).toList());
         }
@@ -51,7 +51,7 @@ public class UsersController {
 
     @GetMapping(path = "/me", produces = "application/json")
     public ResponseEntity currentUser(HttpSession httpSession) {
-        final User user = auth(httpSession);
+        final User user = usersService.auth(httpSession);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
@@ -61,7 +61,7 @@ public class UsersController {
 
     @PatchMapping(path = "/me", consumes = "application/json", produces = "application/json")
     public ResponseEntity editUser(@RequestBody User body, HttpSession httpSession) {
-        final User user = auth(httpSession);
+        final User user = usersService.auth(httpSession);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
@@ -81,15 +81,9 @@ public class UsersController {
     }
 
 
-    @GetMapping(path = "/records", produces = "application/json")
-    public ResponseEntity records() {
-        return ResponseEntity.ok(usersService.getRecords());
-    }
-
-
     @PatchMapping(path = "/theme", produces = "application/json")
     public ResponseEntity setTheme(HttpSession httpSession, @RequestBody User body) {
-        final User user = auth(httpSession);
+        final User user = usersService.auth(httpSession);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorCode.UNAUTHORIZED).toList());
         }
@@ -99,11 +93,5 @@ public class UsersController {
             return ResponseEntity.badRequest().body(errors);
         }
         return ResponseEntity.ok(new SuccessResponse("Success"));
-    }
-
-
-    public @Nullable User auth(HttpSession httpSession) {
-        final Long userId = (Long) httpSession.getAttribute("userId");
-        return usersService.findUserById(userId);
     }
 }
