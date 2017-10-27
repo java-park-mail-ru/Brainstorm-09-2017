@@ -38,7 +38,8 @@ public class User {
     private Timestamp updated;
 
 
-    public User() {}
+    public User() {
+    }
 
     public User(@Nullable String login,
                 @Nullable String password,

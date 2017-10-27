@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 
 @RestController
@@ -32,7 +31,7 @@ public class GameController {
     }
 
 
-    @PatchMapping(path = "/local_record", produces = "application/json")
+    @PostMapping(path = "/local_record", produces = "application/json")
     public ResponseEntity localRecord(HttpSession httpSession, @RequestBody User body) {
         final User user = usersService.auth(httpSession);
         if (user == null) {
