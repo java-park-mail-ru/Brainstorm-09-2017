@@ -26,4 +26,10 @@ public class GameControllerTest {
         mockMvc.perform(get("/api/game/records"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void testSuccessLocalRecord() throws Exception {
+        mockMvc.perform(get("/api/game/local_record"))
+                .andExpect(status().isOk());
+    }
 }

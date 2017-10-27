@@ -177,7 +177,7 @@ public class UsersService {
     public void localRecord(Long id, User body) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
-        params.addValue("local_record", body.getTheme());
+        params.addValue("local_record", body.getLocalRecord());
         template.update("UPDATE person SET local_record = :local_record "
                 + "WHERE id = :id AND local_record < :local_record ", params);
     }
