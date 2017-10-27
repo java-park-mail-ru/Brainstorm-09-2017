@@ -1,12 +1,16 @@
 package application.controllers;
 
+import application.models.User;
 import application.servicies.UsersService;
+import application.views.ErrorResponse;
+import application.views.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 @RestController
@@ -25,5 +29,17 @@ public class GameController {
     @GetMapping(path = "/records", produces = "application/json")
     public ResponseEntity records() {
         return ResponseEntity.ok(usersService.getRecords());
+    }
+
+
+    @PatchMapping(path = "/local_record", produces = "application/json")
+    public ResponseEntity localRecord(HttpSession httpSession, @RequestBody User body) {
+        final User user = usersService.auth(httpSession);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorResponse.ErrorCode.UNAUTHORIZED).toList());
+        }
+
+        usersService.localRecord(user.getId(), body);
+        return ResponseEntity.ok(new SuccessResponse("Success"));
     }
 }

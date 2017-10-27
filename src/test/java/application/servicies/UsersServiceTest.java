@@ -149,8 +149,8 @@ public class UsersServiceTest {
     public void testSetTemplate() {
         final User createdUser = create(credentials);
 
-        final User body = new User(null, null, null, null, null,
-                null, 1, null, null);
+        final User body = new User();
+        body.setTheme(1);
         final List errors = usersService.setTheme(createdUser.getId(), body);
         assertTrue(errors.toString(), errors.isEmpty());
         final User updatedUser = userExistingCheck(usersService, credentials);

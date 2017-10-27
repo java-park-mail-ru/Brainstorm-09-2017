@@ -47,6 +47,7 @@ public class UsersService {
             res.getString("email"),
             res.getLong("number_of_games"),
             res.getLong("record"),
+            res.getLong("local_record"),
             res.getInt("theme"),
             res.getTimestamp("created"),
             res.getTimestamp("updated")
@@ -172,6 +173,14 @@ public class UsersService {
         return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
     }
 
+
+    public void localRecord(Long id, User body) {
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        params.addValue("local_record", body.getTheme());
+        template.update("UPDATE person SET local_record = :local_record "
+                + "WHERE id = :id AND local_record < :local_record ", params);
+    }
 
 
     private String hashpw(String pwd) {

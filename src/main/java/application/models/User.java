@@ -26,6 +26,8 @@ public class User {
     private Long numberOfGames;
     @JsonProperty("record")
     private Long record;
+    @JsonProperty("localRecord")
+    private Long localRecord;
 
     @JsonProperty("theme")
     private Integer theme;
@@ -35,6 +37,8 @@ public class User {
     @JsonProperty("updated")
     private Timestamp updated;
 
+
+    public User() {}
 
     public User(@Nullable String login,
                 @Nullable String password,
@@ -51,6 +55,7 @@ public class User {
                 @Nullable @JsonProperty("email") String email,
                 @Nullable @JsonProperty("numberOfGames") Long numberOfGames,
                 @Nullable @JsonProperty("record") Long record,
+                @Nullable @JsonProperty("localRecord") Long localRecord,
                 @Nullable @JsonProperty("theme") Integer theme,
                 @Nullable @JsonProperty("created") Timestamp created,
                 @Nullable @JsonProperty("updated") Timestamp updated) {
@@ -60,6 +65,7 @@ public class User {
         this.email = email;
         this.numberOfGames = numberOfGames;
         this.record = record;
+        this.localRecord = localRecord;
         this.theme = theme;
         this.created = created;
         this.updated = updated;
@@ -127,6 +133,10 @@ public class User {
         return updated;
     }
 
+    public Long getLocalRecord() {
+        return localRecord;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -151,6 +161,10 @@ public class User {
         this.theme = theme;
     }
 
+    public void setLocalRecord(Long localRecord) {
+        this.localRecord = localRecord;
+    }
+
     @JsonProperty("created")
     public @Nullable String getCreatedAsString() {
         return created == null ? null : created.toString();
@@ -160,6 +174,4 @@ public class User {
     public @Nullable String getUpdatedAsString() {
         return updated == null ? null : updated.toString();
     }
-
-
 }
