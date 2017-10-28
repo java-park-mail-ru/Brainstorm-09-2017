@@ -155,7 +155,9 @@ public class UsersService {
 
 
     public List<RecordResponse> getRecords() {
-        return template.query("SELECT login, number_of_games, local_record record FROM person WHERE local_record > 0 " // FIXME: local_record заменить на record
+        // FIXME: local_record заменить на record
+        return template.query(
+                "SELECT login, number_of_games, local_record record FROM person WHERE local_record > 0 "
                 + "ORDER BY record DESC, number_of_games LIMIT " + topRecordsCount, RECORD_MAPPER
         );
     }
