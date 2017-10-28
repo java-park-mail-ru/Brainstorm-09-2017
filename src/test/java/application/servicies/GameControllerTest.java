@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+@SuppressWarnings({"InstanceMethodNamingConvention"})
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
@@ -58,5 +59,14 @@ public class GameControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ \"localRecord\": 123 }"))
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testUnsuccessLocalRecordUnuthorised() throws Exception {
+        mockMvc.perform(post("/api/game/local_record")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"localRecord\": 123 }"))
+                .andExpect(status().isUnauthorized());
     }
 }

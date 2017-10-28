@@ -146,7 +146,7 @@ public class UsersServiceTest {
 
 
     @Test
-    public void testSetTemplate() {
+    public void testSetTheme() {
         final User createdUser = create(credentials);
 
         final User body = new User();
@@ -155,5 +155,23 @@ public class UsersServiceTest {
         assertTrue(errors.toString(), errors.isEmpty());
         final User updatedUser = userExistingCheck(usersService, credentials);
         assertEquals("Шаблон не изменился", updatedUser.getTheme(), body.getTheme());
+    }
+
+
+    @Test
+    public void testLocalRecord() {
+        final User createdUser = create(credentials);
+
+        final User body = new User();
+        body.setLocalRecord(2L);
+        usersService.localRecord(createdUser.getId(), body);
+        User updatedUser = userExistingCheck(usersService, credentials);
+        assertEquals("Рекорд не изменился", updatedUser.getLocalRecord(), body.getLocalRecord());
+
+        final User newBody = new User();
+        newBody.setLocalRecord(1L);
+        usersService.localRecord(createdUser.getId(), newBody);
+        updatedUser = userExistingCheck(usersService, credentials);
+        assertEquals("Рекорд уменьшился", updatedUser.getLocalRecord(), body.getLocalRecord());
     }
 }
