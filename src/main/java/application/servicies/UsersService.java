@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -202,6 +203,11 @@ public class UsersService {
 
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
+        return findUserById(userId);
+    }
+
+    public @Nullable User auth(WebSocketSession webSocketSession) {
+        final Long userId = (Long) webSocketSession.getAttributes().get("userId");
         return findUserById(userId);
     }
 }
