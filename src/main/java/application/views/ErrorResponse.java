@@ -19,7 +19,8 @@ public class ErrorResponse {
         USER_DUPLICATE(4, "There is a user with the same login"),
         USER_NOT_FOUND(5, "User not found"),
         AUTHORISATION_FAILED(6, "Authorization failed"),
-        UNAUTHORIZED(7, "User not authorized");
+        UNAUTHORIZED(7, "User not authorized"),
+        NOTHING_TO_CHANGE(8, "Nothing to change");
 
         private Integer code;
         private String msg;
@@ -33,7 +34,9 @@ public class ErrorResponse {
             return msg;
         }
 
-        public Integer getCode() { return code; }
+        public Integer getCode() {
+            return code;
+        }
     }
 
 
@@ -67,6 +70,7 @@ public class ErrorResponse {
     public Integer getCode() {
         return code;
     }
+
     public String getMsg() {
         return msg;
     }
