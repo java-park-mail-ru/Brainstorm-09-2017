@@ -14,6 +14,7 @@ public class BubbleFactory {
     public static final Float CUBE_SIZE = 9f;
     public static final Float GROWTH_RATE = 1f;
     public static final Float BUBBLE_RADIUS = 0.4f;
+    public static final Float BUBBLE_MAX_RADIUS = 4f;
 
 
     public BubbleFactory(Long blisteringPeriod) {
@@ -73,7 +74,7 @@ public class BubbleFactory {
                 break;
         }
 
-        return new Bubble(coords, GROWTH_RATE, BUBBLE_RADIUS);
+        return new Bubble(coords, GROWTH_RATE, BUBBLE_RADIUS, BUBBLE_MAX_RADIUS);
     }
 
 

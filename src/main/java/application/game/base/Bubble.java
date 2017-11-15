@@ -15,26 +15,47 @@ public class Bubble {
     @JsonProperty("coords")
     private Coords coords;
 
-    @JsonProperty("bubbleRadius")
-    private Float bubbleRadius;
+    @JsonProperty("radius")
+    private Float radius;
+
+    @JsonProperty("maxRadius")
+    private Float maxRadius;
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
 
-    public Bubble(Coords coords, Float growthRate, Float bubbleRadius) {
+    public Bubble(Coords coords, Float growthRate, Float radius, Float maxRadius) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.growthRate = growthRate;
         this.coords = coords;
-        this.bubbleRadius = bubbleRadius;
+        this.radius = radius;
+        this.maxRadius = maxRadius;
     }
 
 
     public void grow(Long frameTime) {
-        bubbleRadius += growthRate * frameTime / 20;
+        radius += growthRate * frameTime / 20;
+    }
+
+
+    public Boolean isBurst() {
+        return radius > maxRadius;
     }
 
 
     public Long getId() {
         return id;
+    }
+
+    public Float getRadius() {
+        return radius;
+    }
+
+    public Coords getCoords() {
+        return coords;
+    }
+
+    public Float getMaxRadius() {
+        return maxRadius;
     }
 }

@@ -4,8 +4,10 @@ import application.game.base.Bubble;
 import application.game.base.ClientSnap;
 import application.game.base.Player;
 import application.game.base.ServerSnap;
+import application.servicies.UsersService;
 import application.websocket.RemotePointService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.socket.CloseStatus;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,12 +21,15 @@ public class Game {
     private Date startTime;
     private Date lastFrameTime;
     private BubbleFactory bubbleFactory;
+    private Boolean isFinished = false;
     @Autowired
     private static RemotePointService remotePointService;
+    @Autowired
+    private static UsersService usersService;
 
 
 
-    public Game(Player firstPlayer, Player secondPlayer, RemotePointService remotePointService) {
+    public Game(Player firstPlayer, Player secondPlayer) {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.bubbleFactory = new BubbleFactory(500L);
@@ -44,14 +49,19 @@ public class Game {
         Boolean shouldSendSnap = false;
 
         if (!clientSnapshots.isEmpty()) {
+            while (!clientSnapshots.isEmpty()) {
+                final ClientSnap snap = clientSnapshots.remove();
+                bubbles.remove(snap.getBurstingBubbleId());
+            }
             shouldSendSnap = true;
         }
-        while (!clientSnapshots.isEmpty()) {
-            final ClientSnap snap = clientSnapshots.remove();
-            bubbles.remove(snap.getBurstingBubbleId());
-        }
 
-        bubbles.values().forEach(bubble -> {bubble.grow(frameTime);});
+        for (Bubble bubble : bubbles.values()) {
+            bubble.grow(frameTime);
+            if (bubble.isBurst()) {
+                finish();
+            }
+        }
 
         final Bubble bubble = bubbleFactory.produce();
         if (bubble != null) {
@@ -80,7 +90,7 @@ public class Game {
             currentPlayer = secondPlayer;
             enymy = firstPlayer;
         }
-        return new ServerSnap(currentPlayer, enymy, bubbles.values());
+        return new ServerSnap(currentPlayer, enymy, bubbles.values(), isFinished);
     }
 
 
@@ -90,5 +100,27 @@ public class Game {
             remotePointService.sendMessageToUser(secondPlayer.getUserId(), getSnapshot(secondPlayer.getUserId()));
         } catch (IOException ignored) {
         }
+    }
+
+
+    public Boolean isFinished() {
+        return isFinished;
+    }
+
+
+    private void finish() {
+        isFinished = true;
+        usersService.record(firstPlayer.getUserId(), firstPlayer.getScore());
+        usersService.record(secondPlayer.getUserId(), secondPlayer.getScore());
+        broadcost();
+        remotePointService.cutDownConnection(firstPlayer.getUserId(), CloseStatus.NORMAL);
+        remotePointService.cutDownConnection(secondPlayer.getUserId(), CloseStatus.NORMAL);
+    }
+
+
+    public void emergencyStop() {
+        isFinished = true;
+        remotePointService.cutDownConnection(firstPlayer.getUserId(), CloseStatus.SERVER_ERROR);
+        remotePointService.cutDownConnection(secondPlayer.getUserId(), CloseStatus.SERVER_ERROR);
     }
 }

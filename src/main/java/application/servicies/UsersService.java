@@ -186,6 +186,15 @@ public class UsersService {
     }
 
 
+    public void record(Long id, Long record) {
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        params.addValue("record", record);
+        template.update("UPDATE person SET record = :record "
+                + "WHERE id = :id AND record < :record ", params);
+    }
+
+
     private String hashpw(String pwd) {
         return BCrypt.hashpw(pwd, BCrypt.gensalt());
     }

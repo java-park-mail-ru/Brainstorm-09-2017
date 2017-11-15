@@ -1,7 +1,10 @@
 package application.websocket;
 
+import application.game.GameService;
+import application.models.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -16,13 +19,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RemotePointService {
     private Map<Long, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper;
+    private final GameService gameService;
 
-    public RemotePointService(ObjectMapper objectMapper) {
+    @Autowired
+    public RemotePointService(ObjectMapper objectMapper, GameService gameService) {
         this.objectMapper = objectMapper;
+        this.gameService = gameService;
     }
 
-    public void registerUser(@NotNull Long userId, @NotNull WebSocketSession webSocketSession) {
-        sessions.put(userId, webSocketSession);
+    public void registerUser(@NotNull User user, @NotNull WebSocketSession webSocketSession) {
+        sessions.put(user.getId(), webSocketSession);
+        gameService.addUser(user);
     }
 
     public boolean isConnected(@NotNull Long userId) {
@@ -39,6 +46,7 @@ public class RemotePointService {
         if (webSocketSession != null && webSocketSession.isOpen()) {
             try {
                 webSocketSession.close(closeStatus);
+                removeUser(userId);
             } catch (IOException ignore) {
             }
         }
