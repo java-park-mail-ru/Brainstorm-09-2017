@@ -22,29 +22,29 @@ public class Coords {
     }
 
     @JsonProperty("x")
-    public Float getX() {
+    public Float getCoordX() {
         return coordX;
     }
 
-    public void setX(Float coordX) {
+    public void setCoordX(Float coordX) {
         this.coordX = coordX;
     }
 
     @JsonProperty("y")
-    public Float getY() {
+    public Float getCoordY() {
         return coordY;
     }
 
-    public void setY(Float coordY) {
+    public void setCoordY(Float coordY) {
         this.coordY = coordY;
     }
 
     @JsonProperty("z")
-    public Float getZ() {
+    public Float getCoordZ() {
         return coordZ;
     }
 
-    public void setZ(Float coordZ) {
+    public void setCoordZ(Float coordZ) {
         this.coordZ = coordZ;
     }
 }
