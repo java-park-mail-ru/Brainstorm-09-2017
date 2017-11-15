@@ -34,7 +34,8 @@ public class Bubble {
 
 
     public void grow(Long frameTime) {
-        radius += growthRate * frameTime / 1000;
+        final Long ratePer = 1000L;
+        radius += growthRate * frameTime / ratePer;
     }
 
 

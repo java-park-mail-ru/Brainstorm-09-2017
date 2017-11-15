@@ -5,46 +5,46 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Coords {
     @JsonProperty("x")
-    private Float xCoord;
+    private Float coordX;
     @JsonProperty("y")
-    private Float yCoord;
+    private Float coordY;
     @JsonProperty("z")
-    private Float zCoord;
+    private Float coordZ;
 
 
     @JsonCreator
-    public Coords(@JsonProperty("x") Float xCoord,
-                  @JsonProperty("y") Float yCoord,
-                  @JsonProperty("z") Float zCoord) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.zCoord = zCoord;
+    public Coords(@JsonProperty("x") Float coordX,
+                  @JsonProperty("y") Float coordY,
+                  @JsonProperty("z") Float coordZ) {
+        this.coordX = coordX;
+        this.coordY = coordY;
+        this.coordZ = coordZ;
     }
 
     @JsonProperty("x")
     public Float getX() {
-        return xCoord;
+        return coordX;
     }
 
-    public void setX(Float xCoord) {
-        this.xCoord = xCoord;
+    public void setX(Float coordX) {
+        this.coordX = coordX;
     }
 
     @JsonProperty("y")
     public Float getY() {
-        return yCoord;
+        return coordY;
     }
 
-    public void setY(Float yCoord) {
-        this.yCoord = yCoord;
+    public void setY(Float coordY) {
+        this.coordY = coordY;
     }
 
     @JsonProperty("z")
     public Float getZ() {
-        return zCoord;
+        return coordZ;
     }
 
-    public void setZ(Float zCoord) {
-        this.zCoord = zCoord;
+    public void setZ(Float coordZ) {
+        this.coordZ = coordZ;
     }
 }
