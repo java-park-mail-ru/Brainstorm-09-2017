@@ -16,7 +16,7 @@ public class GameService implements Runnable {
     private List<Game> games = new ArrayList<>();
     private Queue<Player> playersQueue = new LinkedList<>();
 
-    private static final Long FRAME_TIME = 20L;
+    public static final Long FRAME_TIME = 20L;
 
 
     @Override

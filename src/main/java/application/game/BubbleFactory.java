@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.Random;
 
 public class BubbleFactory {
-    protected Long blisteringPeriod;
-    protected Date lastProduceTime;
+    private Long blisteringPeriod;
+    private Date lastProduceTime;
 
     public static final Float CUBE_SIZE = 9f;
     public static final Float GROWTH_RATE = 1f;
@@ -42,8 +42,9 @@ public class BubbleFactory {
         final Random rand = new Random();
         final Float halfSize = CUBE_SIZE / 2;
         final Coords coords;
-        // TODO: 4 грани, потому что на фронте еще не реализовано вращение по вертикали
-        switch (rand.nextInt(4)) {
+        // TODO: 4 грани, потому что на фронте еще не реализовано вращение по вертикали.
+        final Integer faceCount = 4;
+        switch (rand.nextInt(faceCount)) {
             case 0:
                 coords = new Coords(
                         rand.nextFloat() * CUBE_SIZE - halfSize,

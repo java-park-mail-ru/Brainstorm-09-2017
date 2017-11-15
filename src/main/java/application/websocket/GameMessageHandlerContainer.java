@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class GameMessageHandlerContainer implements MessageHandlerContainer {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(GameMessageHandlerContainer.class);
-    final Map<Class<?>, MessageHandler<?>> handlerMap = new HashMap<>();
+    private final Map<Class<?>, MessageHandler<?>> handlerMap = new HashMap<>();
 
     @Override
     public void handle(@NotNull Message message, @NotNull Long forUser) throws HandleException {
@@ -22,7 +22,7 @@ public class GameMessageHandlerContainer implements MessageHandlerContainer {
             throw new HandleException("No handler for message of " + message.getClass().getName() + " type");
         }
         messageHandler.handleMessage(message, forUser);
-        LOGGER.trace("Message handled: type =[" + message.getClass().getName()+ ']');
+        LOGGER.trace("Message handled: type =[" + message.getClass().getName() + ']');
     }
 
     @Override

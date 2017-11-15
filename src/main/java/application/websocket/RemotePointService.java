@@ -36,8 +36,7 @@ public class RemotePointService {
         return sessions.containsKey(userId) && sessions.get(userId).isOpen();
     }
 
-    public void removeUser(@NotNull Long userId)
-    {
+    public void removeUser(@NotNull Long userId) {
         sessions.remove(userId);
     }
 

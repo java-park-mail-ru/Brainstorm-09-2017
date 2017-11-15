@@ -27,12 +27,14 @@ public class Game {
     @Autowired
     private static UsersService usersService;
 
+    private static final Long BLISTARING_PERIOD = 500L;
+
 
 
     public Game(Player firstPlayer, Player secondPlayer) {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
-        this.bubbleFactory = new BubbleFactory(500L);
+        this.bubbleFactory = new BubbleFactory(BLISTARING_PERIOD);
         bubbles = new TreeMap<>();
         clientSnapshots = new LinkedList<>();
         startTime = new Date();
