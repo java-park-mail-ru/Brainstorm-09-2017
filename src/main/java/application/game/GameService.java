@@ -12,22 +12,29 @@ import java.util.*;
 
 
 @Service
-public class GameService implements Runnable {
+public class GameService {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(GameService.class);
     private List<Game> games = new ArrayList<>();
     private Queue<Player> playersQueue = new LinkedList<>();
 
     public static final Long FRAME_TIME = 20L;
 
-
-    @Override
-    public void run() {
-        try {
-            mainCycle();
-        } finally {
-            LOGGER.warn("Mechanic executor terminated");
+    class MechanicsExucuter implements Runnable {
+        @Override
+        public void run() {
+            try {
+                mainCycle();
+            } finally {
+                LOGGER.warn("Mechanic executor terminated");
+            }
         }
     }
+
+
+    public GameService() {
+        new Thread(new MechanicsExucuter()).start();
+    }
+
 
     private void mainCycle() {
         while (true) {
