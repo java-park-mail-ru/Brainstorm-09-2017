@@ -54,6 +54,8 @@ public class Game {
             while (!clientSnapshots.isEmpty()) {
                 final ClientSnap snap = clientSnapshots.remove();
                 bubbles.remove(snap.getBurstingBubbleId());
+                final Optional<Player> player = getPlayer(snap.getUserId());
+                player.ifPresent(pl -> pl.addPoints(1L));
             }
             shouldSendSnap = true;
         }
@@ -124,5 +126,21 @@ public class Game {
         isFinished = true;
         remotePointService.cutDownConnection(firstPlayer.getUserId(), CloseStatus.SERVER_ERROR);
         remotePointService.cutDownConnection(secondPlayer.getUserId(), CloseStatus.SERVER_ERROR);
+    }
+
+
+    public Boolean hasPlayer(Long userId) {
+        return firstPlayer.getUserId().equals(userId) || secondPlayer.getUserId().equals(userId);
+    }
+
+
+    public Optional<Player> getPlayer(Long userId) {
+        if (firstPlayer.getUserId().equals(userId)) {
+            return Optional.of(firstPlayer);
+        }
+        if (secondPlayer.getUserId().equals(userId)) {
+            return Optional.of(secondPlayer);
+        }
+        return Optional.empty();
     }
 }

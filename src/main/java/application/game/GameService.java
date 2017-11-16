@@ -1,5 +1,6 @@
 package application.game;
 
+import application.game.base.ClientSnap;
 import application.game.base.Player;
 import application.models.User;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,8 @@ public class GameService implements Runnable {
         while (true) {
             final Long before = new Date().getTime();
 
+            startNewGames();
+
             for (Game game : games) {
                 try {
                     if (!game.isFinished()) {
@@ -46,10 +49,6 @@ public class GameService implements Runnable {
                 }
             }
 
-            while (playersQueue.size() >= 2) {
-                games.add(new Game(playersQueue.remove(), playersQueue.remove()));
-            }
-
             final Long after = new Date().getTime();
 
             try {
@@ -62,7 +61,23 @@ public class GameService implements Runnable {
     }
 
 
+    private void startNewGames() {
+        while (playersQueue.size() >= 2) {
+            final Player firstPlayer = playersQueue.remove();
+            final Player secondPlayer = playersQueue.remove();
+            final Game game = new Game(firstPlayer, secondPlayer);
+            games.add(game);
+        }
+    }
+
+
     public void addUser(User user) {
         playersQueue.add(new Player(user));
+    }
+
+
+    public void addClientSnapshot(Long userId, ClientSnap snap) {
+        final Optional<Game> game = games.stream().filter(gm -> gm.hasPlayer(userId)).findFirst();
+        game.ifPresent(gm -> gm.addClientSnapshot(snap));
     }
 }

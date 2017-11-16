@@ -4,6 +4,8 @@ import application.websocket.Message;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ClientSnap extends Message {
+    private Long userId;
+
     @JsonProperty("burstingBubbleId")
     private Long burstingBubbleId;
 
@@ -13,5 +15,13 @@ public class ClientSnap extends Message {
 
     public Long getBurstingBubbleId() {
         return burstingBubbleId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
