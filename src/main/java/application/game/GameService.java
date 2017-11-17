@@ -67,8 +67,7 @@ public class GameService {
                 } catch (InterruptedException e) {
                     LOGGER.error("Mechanics thread was interrupted", e);
                 }
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 LOGGER.error("Mechanics executor was reseted due to exception", e);
                 games.clear();
                 playersQueue.clear();
