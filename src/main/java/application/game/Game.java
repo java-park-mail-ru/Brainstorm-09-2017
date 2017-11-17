@@ -7,12 +7,14 @@ import application.game.base.ServerSnap;
 import application.servicies.UsersService;
 import application.websocket.RemotePointService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 
 import java.io.IOException;
 import java.util.*;
 
 
+@Component
 public class Game {
     private Player firstPlayer;
     private Player secondPlayer;
@@ -22,13 +24,11 @@ public class Game {
     private Date lastFrameTime;
     private BubbleFactory bubbleFactory;
     private Boolean isFinished = false;
-    @Autowired
+
     private static RemotePointService remotePointService;
-    @Autowired
     private static UsersService usersService;
 
     private static final Long BLISTARING_PERIOD = 500L;
-
 
 
     public Game(Player firstPlayer, Player secondPlayer) {
@@ -40,6 +40,14 @@ public class Game {
         startTime = new Date();
         lastFrameTime = new Date();
     }
+
+
+    @Autowired
+    private Game(RemotePointService rps, UsersService us) {
+        Game.remotePointService = rps;
+        Game.usersService = us;
+    }
+
 
     public void gmStep() {
         final Date now = new Date();
