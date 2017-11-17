@@ -38,31 +38,40 @@ public class GameService {
 
     private void mainCycle() {
         while (true) {
-            final Long before = new Date().getTime();
+            try {
+                final Long before = new Date().getTime();
 
-            startNewGames();
+                startNewGames();
 
-            for (Game game : games) {
-                try {
-                    if (!game.isFinished()) {
-                        game.gmStep();
-                    } else {
+                Iterator<Game> gameIter = games.iterator();
+                while (gameIter.hasNext()) {
+                    Game game = gameIter.next();
+                    try {
+                        if (!game.isFinished()) {
+                            game.gmStep();
+                        } else {
+                            gameIter.remove();
+                        }
+                    } catch (RuntimeException e) {
+                        LOGGER.error("The game emergincy stoped", e);
+                        game.emergencyStop();
                         games.remove(game);
                     }
-                } catch (RuntimeException e) {
-                    LOGGER.error("Mechanics executor was reseted due to exception", e);
-                    game.emergencyStop();
-                    games.remove(game);
+                }
+
+                final Long after = new Date().getTime();
+
+                try {
+                    final Long sleepingTime = Math.max(0, FRAME_TIME - (after - before));
+                    Thread.sleep(sleepingTime);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Mechanics thread was interrupted", e);
                 }
             }
-
-            final Long after = new Date().getTime();
-
-            try {
-                final Long sleepingTime = Math.max(0, FRAME_TIME - (after - before));
-                Thread.sleep(sleepingTime);
-            } catch (InterruptedException e) {
-                LOGGER.error("Mechanics thread was interrupted", e);
+            catch (RuntimeException e) {
+                LOGGER.error("Mechanics executor was reseted due to exception", e);
+                games.clear();
+                playersQueue.clear();
             }
         }
     }
