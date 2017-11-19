@@ -12,7 +12,7 @@ public class BubbleFactory {
     private Date lastProduceTime;
 
     public static final Float CUBE_SIZE = 9f;
-    public static final Float GROWTH_RATE = 0.5f;
+    public static final Float GROWTH_RATE = 0.2f;
     public static final Float BUBBLE_RADIUS = 0.4f;
     public static final Float BUBBLE_MAX_RADIUS = 4f;
 
