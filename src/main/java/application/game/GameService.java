@@ -17,7 +17,7 @@ public class GameService {
     private List<Game> games = new ArrayList<>();
     private Queue<Player> playersQueue = new LinkedList<>();
 
-    public static final Long FRAME_TIME = 20L;
+    public static final Long FRAME_TIME = 50L;
 
     class MechanicsExucuter implements Runnable {
         @Override
