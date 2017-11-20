@@ -81,10 +81,9 @@ public class Game {
             shouldSendSnap = true;
         }
 
-        // TODO: Временно пока, фронт не сделает интерполяцию
-        // if (shouldSendSnap) {
-        broadcost();
-        // }
+        if (shouldSendSnap) {
+            broadcost();
+        }
     }
 
 
