@@ -1,20 +1,17 @@
 package application.game.messages;
 
-import application.game.base.Player;
 import application.websocket.Message;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BurstingBubbles extends Message {
-    @JsonProperty("currentPlayer")
-    private Player currentPlayer;
+    @JsonProperty("currentPlayerScore")
+    private Long currentPlayerScore;
 
-    @JsonProperty("enemy")
-    private Player enemy;
+    @JsonProperty("enemyScore")
+    private Long enemyScore;
 
     @JsonProperty("burstingBubbleIds")
     private List<BurstingBubble> burstingBubbles;
@@ -46,14 +43,22 @@ public class BurstingBubbles extends Message {
     }
 
 
-    public BurstingBubbles(Player currentPlayer, Player enemy, List<ClientSnap> clientSnaps) {
-        this.currentPlayer = currentPlayer;
-        this.enemy = enemy;
+    public BurstingBubbles(Long currentPlayerScore, Long enemyScore, List<ClientSnap> clientSnaps) {
+        this.currentPlayerScore = currentPlayerScore;
+        this.enemyScore = enemyScore;
         this.burstingBubbles = clientSnaps.stream().map(BurstingBubble::new).collect(Collectors.toList());
     }
 
 
     public List<BurstingBubble> getBurstingBubbles() {
         return burstingBubbles;
+    }
+
+    public Long getCurrentPlayerScore() {
+        return currentPlayerScore;
+    }
+
+    public Long getEnemyScore() {
+        return enemyScore;
     }
 }

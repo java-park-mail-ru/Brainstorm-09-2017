@@ -76,8 +76,8 @@ public class Game {
             }
             if (!executedSnaps.isEmpty()) {
                 broadcost(
-                        new BurstingBubbles(firstPlayer, secondPlayer, executedSnaps),
-                        new BurstingBubbles(secondPlayer, firstPlayer, executedSnaps)
+                        new BurstingBubbles(firstPlayer.getScore(), secondPlayer.getScore(), executedSnaps),
+                        new BurstingBubbles(secondPlayer.getScore(), firstPlayer.getScore(), executedSnaps)
                 );
             }
         }
