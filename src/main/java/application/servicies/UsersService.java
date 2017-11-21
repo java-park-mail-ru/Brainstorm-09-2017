@@ -156,9 +156,8 @@ public class UsersService {
 
 
     public List<RecordResponse> getRecords() {
-        // FIXME: local_record заменить на record
         return template.query(
-                "SELECT login, number_of_games, local_record record FROM person WHERE local_record > 0 "
+                "SELECT login, number_of_games, record FROM person WHERE record > 0 "
                 + "ORDER BY record DESC, number_of_games LIMIT " + topRecordsCount, RECORD_MAPPER
         );
     }
@@ -190,8 +189,10 @@ public class UsersService {
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
         params.addValue("record", record);
-        template.update("UPDATE person SET record = :record "
-                + "WHERE id = :id AND record < :record ", params);
+        template.update("UPDATE person "
+                + "SET record = CASE WHEN record < :record THEN :record ELSE record END, "
+                + " number_of_games = number_of_games + 1 "
+                + "WHERE id = :id ", params);
     }
 
 
