@@ -1,10 +1,13 @@
 package application.game;
 
 import application.game.base.Bubble;
+import application.game.messages.BurstingBubbles;
 import application.game.messages.ClientSnap;
 import application.game.base.Player;
+import application.game.messages.NewBubbles;
 import application.game.messages.ServerSnap;
 import application.servicies.UsersService;
+import application.websocket.Message;
 import application.websocket.RemotePointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +42,8 @@ public class Game {
         clientSnapshots = new LinkedList<>();
         startTime = new Date();
         lastFrameTime = new Date();
+
+        broadcost();
     }
 
 
@@ -56,16 +61,22 @@ public class Game {
     }
 
     private void mechanic(Long frameTime) {
-        Boolean shouldSendSnap = false;
-
         if (!clientSnapshots.isEmpty()) {
+            final BurstingBubbles burstingBubblesMsg = new BurstingBubbles();
             while (!clientSnapshots.isEmpty()) {
                 final ClientSnap snap = clientSnapshots.remove();
-                bubbles.remove(snap.getBurstingBubbleId());
                 final Optional<Player> player = getPlayer(snap.getUserId());
-                player.ifPresent(pl -> pl.addPoints(1L));
+                player.ifPresent(pl -> {
+                    final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
+                    if (bustingBubble != null) {
+                        pl.addPoints(1L);
+                        burstingBubblesMsg.add(snap);
+                    }
+                });
             }
-            shouldSendSnap = true;
+            if (!burstingBubblesMsg.isEmpty()) {
+                broadcost(burstingBubblesMsg);
+            }
         }
 
         for (Bubble bubble : bubbles.values()) {
@@ -78,11 +89,7 @@ public class Game {
         final Bubble bubble = bubbleFactory.produce();
         if (bubble != null) {
             bubbles.put(bubble.getId(), bubble);
-            shouldSendSnap = true;
-        }
-
-        if (shouldSendSnap) {
-            broadcost();
+            broadcost(new NewBubbles(bubble));
         }
     }
 
@@ -110,6 +117,14 @@ public class Game {
         try {
             remotePointService.sendMessageToUser(firstPlayer.getUserId(), getSnapshot(firstPlayer.getUserId()));
             remotePointService.sendMessageToUser(secondPlayer.getUserId(), getSnapshot(secondPlayer.getUserId()));
+        } catch (IOException ignored) {
+        }
+    }
+
+    public void broadcost(Message msg) {
+        try {
+            remotePointService.sendMessageToUser(firstPlayer.getUserId(), msg);
+            remotePointService.sendMessageToUser(secondPlayer.getUserId(), msg);
         } catch (IOException ignored) {
         }
     }
