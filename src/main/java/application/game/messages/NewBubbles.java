@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public class NewBubbles extends Message {
     @JsonProperty("bubbles")
-    Collection<Bubble> bubbles;
+    private Collection<Bubble> bubbles;
 
     public NewBubbles(Collection<Bubble> bubbles) {
         this.bubbles = bubbles;

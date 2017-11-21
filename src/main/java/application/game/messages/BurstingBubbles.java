@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class BurstingBubbles extends Message {
     @JsonProperty("burstingBubbleIds")
-    List<BurstingBubble> burstingBubbles;
+    private List<BurstingBubble> burstingBubbles;
 
 
     public static class BurstingBubble {
