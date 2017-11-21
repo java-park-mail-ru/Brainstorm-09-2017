@@ -62,7 +62,7 @@ public class Game {
 
     private void mechanic(Long frameTime) {
         if (!clientSnapshots.isEmpty()) {
-            final BurstingBubbles burstingBubblesMsg = new BurstingBubbles();
+            final List<ClientSnap> executedSnaps = new ArrayList<>();
             while (!clientSnapshots.isEmpty()) {
                 final ClientSnap snap = clientSnapshots.remove();
                 final Optional<Player> player = getPlayer(snap.getUserId());
@@ -70,12 +70,15 @@ public class Game {
                     final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
                     if (bustingBubble != null) {
                         pl.addPoints(1L);
-                        burstingBubblesMsg.add(snap);
+                        executedSnaps.add(snap);
                     }
                 });
             }
-            if (!burstingBubblesMsg.isEmpty()) {
-                broadcost(burstingBubblesMsg);
+            if (!executedSnaps.isEmpty()) {
+                broadcost(
+                        new BurstingBubbles(firstPlayer, secondPlayer, executedSnaps),
+                        new BurstingBubbles(secondPlayer, firstPlayer, executedSnaps)
+                );
             }
         }
 
@@ -114,17 +117,17 @@ public class Game {
 
 
     public void broadcost() {
-        try {
-            remotePointService.sendMessageToUser(firstPlayer.getUserId(), getSnapshot(firstPlayer.getUserId()));
-            remotePointService.sendMessageToUser(secondPlayer.getUserId(), getSnapshot(secondPlayer.getUserId()));
-        } catch (IOException ignored) {
-        }
+        broadcost(getSnapshot(firstPlayer.getUserId()), getSnapshot(secondPlayer.getUserId()));
     }
 
     public void broadcost(Message msg) {
+        broadcost(msg, msg);
+    }
+
+    public void broadcost(Message forFirstPlayer, Message forSecondPlayer) {
         try {
-            remotePointService.sendMessageToUser(firstPlayer.getUserId(), msg);
-            remotePointService.sendMessageToUser(secondPlayer.getUserId(), msg);
+            remotePointService.sendMessageToUser(firstPlayer.getUserId(), forFirstPlayer);
+            remotePointService.sendMessageToUser(secondPlayer.getUserId(), forSecondPlayer);
         } catch (IOException ignored) {
         }
     }

@@ -1,5 +1,6 @@
 package application.game.messages;
 
+import application.game.base.Player;
 import application.websocket.Message;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BurstingBubbles extends Message {
+    @JsonProperty("currentPlayer")
+    private Player currentPlayer;
+
+    @JsonProperty("enemy")
+    private Player enemy;
+
     @JsonProperty("burstingBubbleIds")
     private List<BurstingBubble> burstingBubbles;
 
@@ -39,23 +46,10 @@ public class BurstingBubbles extends Message {
     }
 
 
-    public BurstingBubbles(List<ClientSnap> clientSnaps) {
-        burstingBubbles = clientSnaps.stream().map(BurstingBubble::new).collect(Collectors.toList());
-    }
-
-    public BurstingBubbles() {
-        burstingBubbles = new ArrayList<>();
-    }
-
-
-    public void add(ClientSnap clientSnap) {
-        burstingBubbles.add(new BurstingBubble(clientSnap));
-    }
-
-
-    @JsonIgnore
-    public Boolean isEmpty() {
-        return burstingBubbles.isEmpty();
+    public BurstingBubbles(Player currentPlayer, Player enemy, List<ClientSnap> clientSnaps) {
+        this.currentPlayer = currentPlayer;
+        this.enemy = enemy;
+        this.burstingBubbles = clientSnaps.stream().map(BurstingBubble::new).collect(Collectors.toList());
     }
 
 
