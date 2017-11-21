@@ -3,8 +3,8 @@ package application.websocket;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import application.game.base.ClientSnap;
-import application.game.base.ServerSnap;
+import application.game.messages.ClientSnap;
+import application.game.messages.ServerSnap;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "class")
 @JsonSubTypes({

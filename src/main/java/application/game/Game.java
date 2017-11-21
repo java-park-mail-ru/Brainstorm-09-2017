@@ -1,9 +1,9 @@
 package application.game;
 
 import application.game.base.Bubble;
-import application.game.base.ClientSnap;
+import application.game.messages.ClientSnap;
 import application.game.base.Player;
-import application.game.base.ServerSnap;
+import application.game.messages.ServerSnap;
 import application.servicies.UsersService;
 import application.websocket.RemotePointService;
 import org.springframework.beans.factory.annotation.Autowired;

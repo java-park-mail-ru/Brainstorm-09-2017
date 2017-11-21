@@ -1,4 +1,4 @@
-package application.game.base;
+package application.game.messages;
 
 import application.websocket.Message;
 import com.fasterxml.jackson.annotation.JsonProperty;

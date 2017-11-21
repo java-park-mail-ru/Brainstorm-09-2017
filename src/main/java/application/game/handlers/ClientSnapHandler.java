@@ -1,7 +1,7 @@
-package application.handlers;
+package application.game.handlers;
 
 import application.game.GameService;
-import application.game.base.ClientSnap;
+import application.game.messages.ClientSnap;
 import application.websocket.MessageHandler;
 import application.websocket.MessageHandlerContainer;
 import org.jetbrains.annotations.NotNull;

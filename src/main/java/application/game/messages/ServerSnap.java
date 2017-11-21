@@ -1,5 +1,7 @@
-package application.game.base;
+package application.game.messages;
 
+import application.game.base.Bubble;
+import application.game.base.Player;
 import application.websocket.Message;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

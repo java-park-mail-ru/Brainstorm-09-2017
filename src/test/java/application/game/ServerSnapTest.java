@@ -1,6 +1,7 @@
 package application.game;
 
 import application.game.base.*;
+import application.game.messages.ServerSnap;
 import application.models.User;
 import application.websocket.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,6 @@
 package application.game;
 
-import application.game.base.ClientSnap;
+import application.game.messages.ClientSnap;
 import application.game.base.Player;
 import application.models.User;
 import org.jetbrains.annotations.NotNull;
