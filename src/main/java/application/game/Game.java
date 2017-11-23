@@ -1,14 +1,13 @@
 package application.game;
 
 import application.game.base.Bubble;
-import application.game.messages.BurstingBubbles;
-import application.game.messages.ClientSnap;
+import application.game.messages.*;
 import application.game.base.Player;
-import application.game.messages.NewBubbles;
-import application.game.messages.ServerSnap;
 import application.servicies.UsersService;
+import application.websocket.ClientMessage;
 import application.websocket.Message;
 import application.websocket.RemotePointService;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -22,7 +21,7 @@ public class Game {
     private Player firstPlayer;
     private Player secondPlayer;
     private Map<Long, Bubble> bubbles;
-    private Queue<ClientSnap> clientSnapshots;
+    private Queue<ClientMessage> clientMessages;
     private Date startTime;
     private Date lastFrameTime;
     private BubbleFactory bubbleFactory;
@@ -39,7 +38,7 @@ public class Game {
         this.secondPlayer = secondPlayer;
         this.bubbleFactory = new BubbleFactory(BLISTARING_PERIOD);
         bubbles = new TreeMap<>();
-        clientSnapshots = new LinkedList<>();
+        clientMessages = new LinkedList<>();
         startTime = new Date();
         lastFrameTime = new Date();
 
@@ -60,27 +59,8 @@ public class Game {
         lastFrameTime = now;
     }
 
-    private void mechanic(Long frameTime) {
-        if (!clientSnapshots.isEmpty()) {
-            final List<ClientSnap> executedSnaps = new ArrayList<>();
-            while (!clientSnapshots.isEmpty()) {
-                final ClientSnap snap = clientSnapshots.remove();
-                final Optional<Player> player = getPlayer(snap.getUserId());
-                player.ifPresent(pl -> {
-                    final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
-                    if (bustingBubble != null) {
-                        pl.addPoints(1L);
-                        executedSnaps.add(snap);
-                    }
-                });
-            }
-            if (!executedSnaps.isEmpty()) {
-                broadcost(
-                        new BurstingBubbles(firstPlayer.getScore(), secondPlayer.getScore(), executedSnaps),
-                        new BurstingBubbles(secondPlayer.getScore(), firstPlayer.getScore(), executedSnaps)
-                );
-            }
-        }
+    protected void mechanic(Long frameTime) {
+        handleMessages();
 
         for (Bubble bubble : bubbles.values()) {
             bubble.grow(frameTime);
@@ -96,9 +76,42 @@ public class Game {
         }
     }
 
+    protected void handleMessages() {
+        if (!clientMessages.isEmpty()) {
+            final List<ClientSnap> executedSnaps = new ArrayList<>();
+            while (!clientMessages.isEmpty()) {
+                final ClientMessage msg = clientMessages.remove();
+                final Player player = getPlayer(msg.getSenderId());
+                if (player != null) {
+                    if (ClientSnap.class.isInstance(msg)) {
+                        final ClientSnap snap = (ClientSnap) msg;
+                        final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
+                        if (bustingBubble != null) {
+                            player.addPoints(1L);
+                            executedSnaps.add(snap);
+                        }
+                    } else if (Surrender.class.isInstance(msg)) {
+                        player.surrender();
+                        broadcost();
+                        if (firstPlayer.isSurrender() && secondPlayer.isSurrender()) {
+                            finish();
+                        }
+                    }
+                }
+            }
+            if (!executedSnaps.isEmpty()) {
+                broadcost(
+                        new BurstingBubbles(firstPlayer.getScore(), secondPlayer.getScore(), executedSnaps),
+                        new BurstingBubbles(secondPlayer.getScore(), firstPlayer.getScore(), executedSnaps)
+                );
+            }
+        }
+    }
 
-    public void addClientSnapshot(ClientSnap snap) {
-        clientSnapshots.add(snap);
+
+    public void addClientMessage(ClientMessage msg) {
+        System.out.println(msg);
+        clientMessages.add(msg);
     }
 
 
@@ -156,17 +169,19 @@ public class Game {
 
 
     public Boolean hasPlayer(Long userId) {
-        return firstPlayer.getUserId().equals(userId) || secondPlayer.getUserId().equals(userId);
+        final Boolean isFirst = firstPlayer.getUserId().equals(userId) && !firstPlayer.isSurrender();
+        final Boolean isSecond = secondPlayer.getUserId().equals(userId) && !secondPlayer.isSurrender();
+        return isFirst || isSecond;
     }
 
 
-    public Optional<Player> getPlayer(Long userId) {
+    public @Nullable Player getPlayer(Long userId) {
         if (firstPlayer.getUserId().equals(userId)) {
-            return Optional.of(firstPlayer);
+            return firstPlayer;
         }
         if (secondPlayer.getUserId().equals(userId)) {
-            return Optional.of(secondPlayer);
+            return secondPlayer;
         }
-        return Optional.empty();
+        return null;
     }
 }

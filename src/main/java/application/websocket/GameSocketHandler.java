@@ -62,9 +62,10 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @SuppressWarnings("OverlyBroadCatchBlock")
     private void handleMessage(User userProfile, TextMessage text) {
-        final Message message;
+        final ClientMessage message;
         try {
-            message = objectMapper.readValue(text.getPayload(), Message.class);
+            message = objectMapper.readValue(text.getPayload(), ClientMessage.class);
+            message.setSenderId(userProfile.getId());
         } catch (IOException ex) {
             LOGGER.error("Wrong json format at game response", ex);
             return;

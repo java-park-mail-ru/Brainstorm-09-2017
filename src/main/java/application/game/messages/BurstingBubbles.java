@@ -29,7 +29,7 @@ public class BurstingBubbles extends Message {
         }
 
         BurstingBubble(ClientSnap clientSnap) {
-            this.userId = clientSnap.getUserId();
+            this.userId = clientSnap.getSenderId();
             this.burstingBubbleId = clientSnap.getBurstingBubbleId();
         }
 

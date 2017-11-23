@@ -1,8 +1,8 @@
 package application.game;
 
-import application.game.messages.ClientSnap;
 import application.game.base.Player;
 import application.models.User;
+import application.websocket.ClientMessage;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,8 +99,8 @@ public class GameService {
     }
 
 
-    public void addClientSnapshot(Long userId, ClientSnap snap) {
+    public void addClientMessage(Long userId, ClientMessage msg) {
         final Optional<Game> game = games.stream().filter(gm -> gm.hasPlayer(userId)).findFirst();
-        game.ifPresent(gm -> gm.addClientSnapshot(snap));
+        game.ifPresent(gm -> gm.addClientMessage(msg));
     }
 }
