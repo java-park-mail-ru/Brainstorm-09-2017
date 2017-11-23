@@ -35,15 +35,15 @@ public class Player {
 
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
 
-        Player player = (Player) o;
+        Player player = (Player) obj;
 
         return userProfile.equals(player.userProfile);
     }
