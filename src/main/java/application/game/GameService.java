@@ -43,9 +43,9 @@ public class GameService {
 
                 startNewGames();
 
-                Iterator<Game> gameIter = games.iterator();
+                final Iterator<Game> gameIter = games.iterator();
                 while (gameIter.hasNext()) {
-                    Game game = gameIter.next();
+                    final Game game = gameIter.next();
                     try {
                         if (!game.isFinished()) {
                             game.gmStep();
@@ -87,7 +87,15 @@ public class GameService {
 
 
     public void addUser(User user) {
-        playersQueue.add(new Player(user));
+        final Player newPlayer = new Player(user);
+        if (!playersQueue.contains(newPlayer)) {
+            final Optional<Game> gameWithPlayer = games.stream()
+                    .filter(game -> game.hasPlayer(newPlayer.getUserId())).findFirst();
+            gameWithPlayer.ifPresent(Game::broadcost);
+            if (!gameWithPlayer.isPresent()) {
+                playersQueue.add(newPlayer);
+            }
+        }
     }
 
 
