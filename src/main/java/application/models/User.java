@@ -197,7 +197,7 @@ public class User {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        int hashConst = 31;
+        final int hashConst = 31;
         result = hashConst * result + (login != null ? login.hashCode() : 0);
         return result;
     }
