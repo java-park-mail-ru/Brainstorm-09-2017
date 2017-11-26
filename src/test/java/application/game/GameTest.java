@@ -6,6 +6,7 @@ import application.game.messages.ClientSnap;
 import application.game.messages.ServerSnap;
 import application.models.User;
 import application.servicies.UsersService;
+import application.websocket.ClientMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -66,5 +68,23 @@ public class GameTest {
         final ServerSnap snap = game.getSnapshot(firstPlayer.getUserId());
         final Collection<Bubble> bubbles = snap.getBubbles();
         assertFalse(bubbles.isEmpty());
+    }
+
+
+    @Test
+    public void testClientBurstBubble() {
+        testNewBubbles();
+        ServerSnap snap = game.getSnapshot(secondPlayer.getUserId());
+        final List<Bubble> bubbles = new ArrayList<>(snap.getBubbles());
+
+        final Bubble bubbleForBurst = bubbles.get(0);
+        final ClientMessage msg = new ClientSnap(bubbleForBurst.getId());
+        msg.setSenderId(secondPlayer.getUserId());
+        game.addClientMessage(msg);
+        game.gmStep();
+
+        snap = game.getSnapshot(secondPlayer.getUserId());
+        assertTrue(snap.getBubbles().stream().noneMatch(bubbleForBurst::equals));
+        assertTrue(snap.getCurrentPlayer().getScore() > 0);
     }
 }
