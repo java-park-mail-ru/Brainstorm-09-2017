@@ -80,7 +80,7 @@ public class GameService {
         while (playersQueue.size() >= 2) {
             final Player firstPlayer = playersQueue.remove();
             final Player secondPlayer = playersQueue.remove();
-            final Game game = new Game(firstPlayer, secondPlayer);
+            final Game game = new GameImpl(firstPlayer, secondPlayer);
             games.add(game);
         }
     }
