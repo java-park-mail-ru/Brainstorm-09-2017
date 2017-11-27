@@ -2,24 +2,35 @@ package application.game;
 
 import application.game.base.Bubble;
 import application.game.base.Coords;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.io.Resources;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
 
+
+@Component
 public class BubbleFactory {
     private Long blisteringPeriod;
     private Date lastProduceTime;
 
-    public static final Float CUBE_SIZE = 9f;
-    public static final Float GROWTH_RATE = 0.2f;
-    public static final Float BUBBLE_RADIUS = 0.4f;
-    public static final Float BUBBLE_MAX_RADIUS = 4f;
+    private static final Float CUBE_SIZE = 9f;
+    private static Bubble resource;
 
 
     public BubbleFactory(Long blisteringPeriod) {
         this.blisteringPeriod = blisteringPeriod;
         lastProduceTime = new Date((new Date().getTime()) - blisteringPeriod);
+    }
+
+    @Autowired
+    private BubbleFactory() throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        resource = objectMapper.readValue(Resources.getResource("BubbleResource.json"), Bubble.class);
     }
 
 
@@ -75,7 +86,7 @@ public class BubbleFactory {
                 break;
         }
 
-        return new Bubble(coords, GROWTH_RATE, BUBBLE_RADIUS, BUBBLE_MAX_RADIUS);
+        return new Bubble(coords, resource.getGrowthRate(), resource.getRadius(), resource.getMaxRadius());
     }
 
 

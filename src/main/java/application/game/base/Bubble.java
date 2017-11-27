@@ -24,7 +24,10 @@ public class Bubble {
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
 
-    public Bubble(Coords coords, Float growthRate, Float radius, Float maxRadius) {
+    public Bubble(@JsonProperty("coords") Coords coords,
+                  @JsonProperty("growthRate") Float growthRate,
+                  @JsonProperty("radius") Float radius,
+                  @JsonProperty("maxRadius") Float maxRadius) {
         this.id = ID_GENERATOR.getAndIncrement();
         this.growthRate = growthRate;
         this.coords = coords;
@@ -60,11 +63,19 @@ public class Bubble {
         return maxRadius;
     }
 
+    public Float getGrowthRate() {
+        return growthRate;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
 
         final Bubble bubble = (Bubble) obj;
 

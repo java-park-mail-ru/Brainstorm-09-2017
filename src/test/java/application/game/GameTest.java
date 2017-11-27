@@ -6,14 +6,11 @@ import application.game.messages.ClientSnap;
 import application.game.messages.ServerSnap;
 import application.game.messages.Surrender;
 import application.models.User;
-import application.servicies.UsersService;
 import application.websocket.ClientMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -31,9 +28,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class GameTest {
     private Player firstPlayer;
     private Player secondPlayer;
-
-    @MockBean
-    private UsersService usersService;
 
     private Game game;
 
