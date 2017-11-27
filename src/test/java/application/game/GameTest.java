@@ -4,12 +4,14 @@ import application.game.base.Bubble;
 import application.game.base.Player;
 import application.game.messages.ClientSnap;
 import application.game.messages.ServerSnap;
+import application.game.messages.Surrender;
 import application.models.User;
 import application.servicies.UsersService;
 import application.websocket.ClientMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -86,5 +88,20 @@ public class GameTest {
         snap = game.getSnapshot(secondPlayer.getUserId());
         assertTrue(snap.getBubbles().stream().noneMatch(bubbleForBurst::equals));
         assertTrue(snap.getCurrentPlayer().getScore() > 0);
+    }
+
+
+    @Test
+    public void testClientSurrendered() {
+        testNewGame();
+        game.gmStep();
+
+        final ClientMessage msg = new Surrender();
+        msg.setSenderId(secondPlayer.getUserId());
+        game.addClientMessage(msg);
+        game.gmStep();
+
+        final ServerSnap snap = game.getSnapshot(firstPlayer.getUserId());
+        assertTrue(snap.getEnemy().isSurrender());
     }
 }
