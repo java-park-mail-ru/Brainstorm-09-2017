@@ -11,7 +11,7 @@ public class ClientSnap extends ClientMessage {
         this.burstingBubbleId = bubbleId;
     }
 
-    public Long getBurstingBubbleId() {
+    public long getBurstingBubbleId() {
         return burstingBubbleId;
     }
 }
