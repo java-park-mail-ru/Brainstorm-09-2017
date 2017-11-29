@@ -46,6 +46,13 @@ public class User {
         this.login = login;
     }
 
+    public User(Long id, String login, String password, String email) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.email = email;
+    }
+
     public User(@Nullable String login,
                 @Nullable String password,
                 @Nullable String email) {
