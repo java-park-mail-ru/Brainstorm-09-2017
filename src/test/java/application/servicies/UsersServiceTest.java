@@ -8,6 +8,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
@@ -21,16 +25,24 @@ public class UsersServiceTest {
     private UsersService usersService;
     private User credentials;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    private TransactionStatus transaction;
+
 
     @Before
     public void setup() {
+        transaction = transactionManager.getTransaction(
+                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
+        );
+
         credentials = new User( "login", "password", "user@mail.ru");
     }
 
 
     @After
     public void after() {
-        usersService.clearDB();
+        transactionManager.rollback(transaction);
     }
 
 

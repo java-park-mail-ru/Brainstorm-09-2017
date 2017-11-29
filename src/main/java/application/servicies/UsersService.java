@@ -81,7 +81,7 @@ public class UsersService {
         try {
             template.update("INSERT INTO person(login, password, email)"
                     + " VALUES (:login,:password,:email) RETURNING id", params, keyHolder);
-            return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+            return Collections.EMPTY_LIST;
         } catch (DuplicateKeyException e) {
             return new ErrorResponse(ErrorCode.USER_DUPLICATE).toList();
         }
@@ -89,7 +89,6 @@ public class UsersService {
 
 
     public List update(Long id, User credentials) {
-        // Проверяю, что есть что-то на изменение
         if (credentials.getEmail() == null && credentials.getPassword() == null) {
             return new ErrorResponse(ErrorCode.NOTHING_TO_CHANGE).toList();
         }
@@ -115,12 +114,12 @@ public class UsersService {
             params.addValue("password", hashpw(credentials.getPassword()));
             values.append("password = :password, ");
         }
-        final Integer count = template.update("UPDATE person SET " + values + "updated = now() WHERE id=:id", params);
+        final Integer count = template.update("UPDATE person SET " + values + " updated = now() WHERE id=:id", params);
 
         if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
-        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+        return Collections.EMPTY_LIST;
     }
 
 
@@ -172,7 +171,7 @@ public class UsersService {
         if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
-        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+        return Collections.EMPTY_LIST;
     }
 
 
@@ -203,11 +202,6 @@ public class UsersService {
 
     public static Boolean checkpw(String pwd, String storedHash) {
         return BCrypt.checkpw(pwd, storedHash);
-    }
-
-
-    void clearDB() {
-        template.update("TRUNCATE TABLE person CASCADE", new MapSqlParameterSource());
     }
 
 
