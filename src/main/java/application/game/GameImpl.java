@@ -3,6 +3,7 @@ package application.game;
 import application.game.base.Bubble;
 import application.game.messages.*;
 import application.game.base.Player;
+import application.websocket.Letter;
 import application.websocket.Message;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +14,8 @@ public class GameImpl implements Game {
     private Player firstPlayer;
     private Player secondPlayer;
     private Map<Long, Bubble> bubbles = new TreeMap<>();
-    private Queue<Message> clientMessages = new LinkedList<>();
-    private Queue<Message> messagesForSend = new LinkedList<>();
+    private Queue<Letter> clientMessages = new LinkedList<>();
+    private Queue<Letter> messagesForSend = new LinkedList<>();
     private Date startTime = new Date();
     private Date lastFrameTime = new Date();
     private BubbleFactory bubbleFactory;
@@ -59,11 +60,13 @@ public class GameImpl implements Game {
         if (!clientMessages.isEmpty()) {
             final List<ClientSnap> executedSnaps = new ArrayList<>();
             while (!clientMessages.isEmpty()) {
-                final Message msg = clientMessages.remove();
-                final Player player = getPlayer(msg.getAddresserId());
+                final Letter letter = clientMessages.remove();
+                final Player player = getPlayer(letter.getAddresserId());
                 if (player != null && !player.isSurrender()) {
+                    final Message msg = letter.getMessage();
+
                     if (ClientSnap.class.isInstance(msg)) {
-                        final ClientSnap snap = (ClientSnap) msg;
+                        final ClientSnap snap = (ClientSnap) letter.getMessage();
                         final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
                         if (bustingBubble != null) {
                             player.addPoints(1L);
@@ -89,9 +92,8 @@ public class GameImpl implements Game {
 
 
     @Override
-    public void addClientMessage(Message msg) {
-        System.out.println(msg);
-        clientMessages.add(msg);
+    public void addClientMessage(Letter letter) {
+        clientMessages.add(letter);
     }
 
 
@@ -121,12 +123,10 @@ public class GameImpl implements Game {
 
     protected void broadcost(Message forFirstPlayer, Message forSecondPlayer) {
         if (!firstPlayer.isSurrender()) {
-            forFirstPlayer.setAddresserId(firstPlayer.getUserId());
-            messagesForSend.add(forFirstPlayer);
+            messagesForSend.add(new Letter(firstPlayer.getUserId(), forFirstPlayer));
         }
         if (!secondPlayer.isSurrender()) {
-            forSecondPlayer.setAddresserId(secondPlayer.getUserId());
-            messagesForSend.add(forSecondPlayer);
+            messagesForSend.add(new Letter(secondPlayer.getUserId(), forSecondPlayer));
         }
     }
 
@@ -139,6 +139,7 @@ public class GameImpl implements Game {
 
     protected void finish() {
         isFinished = true;
+        broadcost();
     }
 
 
@@ -151,10 +152,10 @@ public class GameImpl implements Game {
 
 
     @Override
-    public Queue<Message> getMessagesForSend() {
-        final Queue<Message> messages = messagesForSend;
+    public Queue<Letter> getMessagesForSend() {
+        final Queue<Letter> letters = messagesForSend;
         messagesForSend = new LinkedList<>();
-        return messages;
+        return letters;
     }
 
 

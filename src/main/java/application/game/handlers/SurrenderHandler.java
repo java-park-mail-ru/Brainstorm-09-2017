@@ -27,7 +27,6 @@ public class SurrenderHandler extends MessageHandler<Surrender> {
 
     @Override
     public void handle(@NotNull Surrender message, @NotNull Long forUser) {
-        message.setAddresserId(forUser);
         gameService.addClientMessage(forUser, message);
     }
 }

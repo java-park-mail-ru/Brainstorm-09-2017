@@ -53,7 +53,7 @@ public class RemotePointService {
         }
     }
 
-    public void sendMessage(@NotNull Message msg) throws IOException {
+    public void send(@NotNull Letter msg) throws IOException {
         final WebSocketSession webSocketSession = sessions.get(msg.getAddresserId());
         if (webSocketSession == null) {
             throw new IOException("No game websocket for user " + msg.getAddresserId());
@@ -63,7 +63,7 @@ public class RemotePointService {
         }
         //noinspection OverlyBroadCatchBlock
         try {
-            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg)));
+            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg.getMessage())));
         } catch (IOException e) {
             throw new IOException("Unnable to send message", e);
         }

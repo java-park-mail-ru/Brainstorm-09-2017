@@ -65,7 +65,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Message message;
         try {
             message = objectMapper.readValue(text.getPayload(), Message.class);
-            message.setAddresserId(userProfile.getId());
         } catch (IOException ex) {
             LOGGER.error("Wrong json format at game response", ex);
             return;

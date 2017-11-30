@@ -2,7 +2,7 @@ package application.game;
 
 import application.game.base.Player;
 import application.game.messages.ServerSnap;
-import application.websocket.Message;
+import application.websocket.Letter;
 
 import java.util.List;
 import java.util.Queue;
@@ -10,7 +10,7 @@ import java.util.Queue;
 public interface Game {
     void gmStep();
 
-    void addClientMessage(Message msg);
+    void addClientMessage(Letter msg);
 
     ServerSnap getSnapshot(Long currentPlayerId);
 
@@ -18,7 +18,7 @@ public interface Game {
 
     Boolean hasPlayer(Long userId);
 
-    Queue<Message> getMessagesForSend();
+    Queue<Letter> getMessagesForSend();
 
     List<Player> getPlayers();
 

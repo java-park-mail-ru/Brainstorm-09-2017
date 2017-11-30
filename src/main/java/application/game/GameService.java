@@ -3,6 +3,7 @@ package application.game;
 import application.game.base.Player;
 import application.models.User;
 import application.servicies.UsersService;
+import application.websocket.Letter;
 import application.websocket.Message;
 import application.websocket.RemotePointService;
 import org.jetbrains.annotations.NotNull;
@@ -64,11 +65,11 @@ public class GameService {
                     try {
                         game.gmStep();
 
-                        final Queue<Message> messagesForSend = game.getMessagesForSend();
+                        final Queue<Letter> messagesForSend = game.getMessagesForSend();
                         while (!messagesForSend.isEmpty()) {
-                            final Message msg = messagesForSend.remove();
+                            final Letter letter = messagesForSend.remove();
                             try {
-                                remotePointService.sendMessage(msg);
+                                remotePointService.send(letter);
                             } catch (IOException ignored) {
                             }
                         }
@@ -130,7 +131,7 @@ public class GameService {
 
     public void addClientMessage(Long userId, Message msg) {
         final Optional<Game> game = games.stream().filter(gm -> gm.hasPlayer(userId)).findFirst();
-        game.ifPresent(gm -> gm.addClientMessage(msg));
+        game.ifPresent(gm -> gm.addClientMessage(new Letter(userId, msg)));
     }
 
 
