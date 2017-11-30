@@ -63,7 +63,7 @@ public class UsersService {
     );
 
 
-    public List create(User credentials) {
+    public List<ErrorResponse> create(User credentials) {
         final List<ErrorCode> errors = new ArrayList<>();
         credentials.emailValidator().ifPresent(errors::add);
         credentials.loginValidator().ifPresent(errors::add);
@@ -88,7 +88,7 @@ public class UsersService {
     }
 
 
-    public List update(Long id, User credentials) {
+    public List<ErrorResponse> update(Long id, User credentials) {
         if (credentials.getEmail() == null && credentials.getPassword() == null) {
             return new ErrorResponse(ErrorCode.NOTHING_TO_CHANGE).toList();
         }

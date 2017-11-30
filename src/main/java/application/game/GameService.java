@@ -2,14 +2,18 @@ package application.game;
 
 import application.game.base.Player;
 import application.models.User;
-import application.websocket.ClientMessage;
+import application.servicies.UsersService;
+import application.websocket.Message;
+import application.websocket.RemotePointService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.CloseStatus;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -17,11 +21,16 @@ import java.util.*;
 @PropertySource("classpath:game.properties")
 public class GameService {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(GameService.class);
+
     private List<Game> games = new ArrayList<>();
     private Queue<Player> playersQueue = new LinkedList<>();
 
-    @Value("${game.frameTime}")
-    private Long frameTime;
+    @Autowired
+    private RemotePointService remotePointService;
+
+    private final UsersService usersService;
+
+    private static final Long FRAME_TIME = 50L;
 
     class MechanicsExucuter implements Runnable {
         @Override
@@ -35,7 +44,9 @@ public class GameService {
     }
 
 
-    public GameService() {
+    @Autowired
+    public GameService(UsersService usersService) {
+        this.usersService = usersService;
         new Thread(new MechanicsExucuter()).start();
     }
 
@@ -51,14 +62,27 @@ public class GameService {
                 while (gameIter.hasNext()) {
                     final Game game = gameIter.next();
                     try {
-                        if (!game.isFinished()) {
-                            game.gmStep();
-                        } else {
+                        game.gmStep();
+
+                        final Queue<Message> messagesForSend = game.getMessagesForSend();
+                        while (!messagesForSend.isEmpty()) {
+                            final Message msg = messagesForSend.remove();
+                            try {
+                                remotePointService.sendMessage(msg);
+                            } catch (IOException ignored) {
+                            }
+                        }
+
+                        if (game.isFinished()) {
+                            finishGame(game);
                             gameIter.remove();
                         }
                     } catch (RuntimeException e) {
                         LOGGER.error("The game emergincy stoped", e);
-                        game.emergencyStop();
+                        try {
+                            cutDownPlayersConnections(game);
+                        } catch (RuntimeException ignored) {
+                        }
                         games.remove(game);
                     }
                 }
@@ -66,13 +90,14 @@ public class GameService {
                 final Long after = new Date().getTime();
 
                 try {
-                    final Long sleepingTime = Math.max(0, frameTime - (after - before));
+                    final Long sleepingTime = FRAME_TIME - (after - before);
                     Thread.sleep(sleepingTime);
                 } catch (InterruptedException e) {
                     LOGGER.error("Mechanics thread was interrupted", e);
                 }
             } catch (RuntimeException e) {
                 LOGGER.error("Mechanics executor was reseted due to exception", e);
+                remotePointService.reset();
                 games.clear();
                 playersQueue.clear();
             }
@@ -103,8 +128,25 @@ public class GameService {
     }
 
 
-    public void addClientMessage(Long userId, ClientMessage msg) {
+    public void addClientMessage(Long userId, Message msg) {
         final Optional<Game> game = games.stream().filter(gm -> gm.hasPlayer(userId)).findFirst();
         game.ifPresent(gm -> gm.addClientMessage(msg));
+    }
+
+
+    private void finishGame(Game game) {
+        final List<Player> players = game.getPlayers();
+        for (Player player : players) {
+            usersService.record(player.getUserId(), player.getScore());
+            remotePointService.cutDownConnection(player.getUserId(), CloseStatus.NORMAL);
+        }
+    }
+
+
+    private void cutDownPlayersConnections(Game game) {
+        final List<Player> players = game.getPlayers();
+        for (Player player : players) {
+            remotePointService.cutDownConnection(player.getUserId(), CloseStatus.SERVER_ERROR);
+        }
     }
 }

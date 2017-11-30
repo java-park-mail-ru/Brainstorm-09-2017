@@ -1,7 +1,7 @@
 package application.game.messages;
 
-import application.websocket.ClientMessage;
+import application.websocket.Message;
 
 
-public class Surrender extends ClientMessage {
+public class Surrender extends Message {
 }

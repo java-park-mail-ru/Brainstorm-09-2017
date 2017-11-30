@@ -28,7 +28,7 @@ public class ClientSnapHandler extends MessageHandler<ClientSnap> {
 
     @Override
     public void handle(@NotNull ClientSnap message, @NotNull Long forUser) {
-        message.setSenderId(forUser);
+        message.setAddresserId(forUser);
         gameService.addClientMessage(forUser, message);
     }
 }

@@ -1,20 +1,26 @@
 package application.game;
 
+import application.game.base.Player;
 import application.game.messages.ServerSnap;
-import application.websocket.ClientMessage;
+import application.websocket.Message;
+
+import java.util.List;
+import java.util.Queue;
 
 public interface Game {
     void gmStep();
 
-    void addClientMessage(ClientMessage msg);
+    void addClientMessage(Message msg);
 
     ServerSnap getSnapshot(Long currentPlayerId);
 
     Boolean isFinished();
 
-    void emergencyStop();
-
     Boolean hasPlayer(Long userId);
+
+    Queue<Message> getMessagesForSend();
+
+    List<Player> getPlayers();
 
     void broadcost();
 }

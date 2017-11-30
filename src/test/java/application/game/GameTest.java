@@ -6,7 +6,7 @@ import application.game.messages.ClientSnap;
 import application.game.messages.ServerSnap;
 import application.game.messages.Surrender;
 import application.models.User;
-import application.websocket.ClientMessage;
+import application.websocket.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,8 +74,8 @@ public class GameTest {
         final List<Bubble> bubbles = new ArrayList<>(snap.getBubbles());
 
         final Bubble bubbleForBurst = bubbles.get(0);
-        final ClientMessage msg = new ClientSnap(bubbleForBurst.getId());
-        msg.setSenderId(secondPlayer.getUserId());
+        final Message msg = new ClientSnap(bubbleForBurst.getId());
+        msg.setAddresserId(secondPlayer.getUserId());
         game.addClientMessage(msg);
         game.gmStep();
 
@@ -90,8 +90,8 @@ public class GameTest {
         testNewGame();
         game.gmStep();
 
-        final ClientMessage msg = new Surrender();
-        msg.setSenderId(secondPlayer.getUserId());
+        final Message msg = new Surrender();
+        msg.setAddresserId(secondPlayer.getUserId());
         game.addClientMessage(msg);
         game.gmStep();
 

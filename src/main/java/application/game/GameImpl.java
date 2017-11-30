@@ -3,32 +3,22 @@ package application.game;
 import application.game.base.Bubble;
 import application.game.messages.*;
 import application.game.base.Player;
-import application.servicies.UsersService;
-import application.websocket.ClientMessage;
 import application.websocket.Message;
-import application.websocket.RemotePointService;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
 
-import java.io.IOException;
 import java.util.*;
 
 
-@Component
 public class GameImpl implements Game {
     private Player firstPlayer;
     private Player secondPlayer;
-    private Map<Long, Bubble> bubbles;
-    private Queue<ClientMessage> clientMessages;
-    private Date startTime;
-    private Date lastFrameTime;
+    private Map<Long, Bubble> bubbles = new TreeMap<>();
+    private Queue<Message> clientMessages = new LinkedList<>();
+    private Queue<Message> messagesForSend = new LinkedList<>();
+    private Date startTime = new Date();
+    private Date lastFrameTime = new Date();
     private BubbleFactory bubbleFactory;
     private Boolean isFinished = false;
-
-    private static RemotePointService remotePointService;
-    private static UsersService usersService;
 
     private static final Long BLISTARING_PERIOD = 500L;
 
@@ -37,19 +27,7 @@ public class GameImpl implements Game {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.bubbleFactory = new BubbleFactory(BLISTARING_PERIOD);
-        bubbles = new TreeMap<>();
-        clientMessages = new LinkedList<>();
-        startTime = new Date();
-        lastFrameTime = new Date();
-
         broadcost();
-    }
-
-
-    @Autowired
-    private GameImpl(RemotePointService rps, UsersService us) {
-        GameImpl.remotePointService = rps;
-        GameImpl.usersService = us;
     }
 
 
@@ -81,9 +59,9 @@ public class GameImpl implements Game {
         if (!clientMessages.isEmpty()) {
             final List<ClientSnap> executedSnaps = new ArrayList<>();
             while (!clientMessages.isEmpty()) {
-                final ClientMessage msg = clientMessages.remove();
-                final Player player = getPlayer(msg.getSenderId());
-                if (player != null) {
+                final Message msg = clientMessages.remove();
+                final Player player = getPlayer(msg.getAddresserId());
+                if (player != null && !player.isSurrender()) {
                     if (ClientSnap.class.isInstance(msg)) {
                         final ClientSnap snap = (ClientSnap) msg;
                         final Bubble bustingBubble = bubbles.remove(snap.getBurstingBubbleId());
@@ -111,7 +89,7 @@ public class GameImpl implements Game {
 
 
     @Override
-    public void addClientMessage(ClientMessage msg) {
+    public void addClientMessage(Message msg) {
         System.out.println(msg);
         clientMessages.add(msg);
     }
@@ -137,15 +115,18 @@ public class GameImpl implements Game {
         broadcost(getSnapshot(firstPlayer.getUserId()), getSnapshot(secondPlayer.getUserId()));
     }
 
-    public void broadcost(Message msg) {
+    protected void broadcost(Message msg) {
         broadcost(msg, msg);
     }
 
-    public void broadcost(Message forFirstPlayer, Message forSecondPlayer) {
-        try {
-            remotePointService.sendMessageToUser(firstPlayer.getUserId(), forFirstPlayer);
-            remotePointService.sendMessageToUser(secondPlayer.getUserId(), forSecondPlayer);
-        } catch (IOException ignored) {
+    protected void broadcost(Message forFirstPlayer, Message forSecondPlayer) {
+        if (!firstPlayer.isSurrender()) {
+            forFirstPlayer.setAddresserId(firstPlayer.getUserId());
+            messagesForSend.add(forFirstPlayer);
+        }
+        if (!secondPlayer.isSurrender()) {
+            forSecondPlayer.setAddresserId(secondPlayer.getUserId());
+            messagesForSend.add(forSecondPlayer);
         }
     }
 
@@ -156,21 +137,8 @@ public class GameImpl implements Game {
     }
 
 
-    private void finish() {
+    protected void finish() {
         isFinished = true;
-        usersService.record(firstPlayer.getUserId(), firstPlayer.getScore());
-        usersService.record(secondPlayer.getUserId(), secondPlayer.getScore());
-        broadcost();
-        remotePointService.cutDownConnection(firstPlayer.getUserId(), CloseStatus.NORMAL);
-        remotePointService.cutDownConnection(secondPlayer.getUserId(), CloseStatus.NORMAL);
-    }
-
-
-    @Override
-    public void emergencyStop() {
-        isFinished = true;
-        remotePointService.cutDownConnection(firstPlayer.getUserId(), CloseStatus.SERVER_ERROR);
-        remotePointService.cutDownConnection(secondPlayer.getUserId(), CloseStatus.SERVER_ERROR);
     }
 
 
@@ -179,6 +147,23 @@ public class GameImpl implements Game {
         final Boolean isFirst = firstPlayer.getUserId().equals(userId) && !firstPlayer.isSurrender();
         final Boolean isSecond = secondPlayer.getUserId().equals(userId) && !secondPlayer.isSurrender();
         return isFirst || isSecond;
+    }
+
+
+    @Override
+    public Queue<Message> getMessagesForSend() {
+        final Queue<Message> messages = messagesForSend;
+        messagesForSend = new LinkedList<>();
+        return messages;
+    }
+
+
+    @Override
+    public List<Player> getPlayers() {
+        final List<Player> players = new ArrayList<>();
+        players.add(firstPlayer);
+        players.add(secondPlayer);
+        return players;
     }
 
 

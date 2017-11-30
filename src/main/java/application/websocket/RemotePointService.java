@@ -11,6 +11,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,12 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RemotePointService {
     private Map<Long, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper;
-    private final GameService gameService;
 
     @Autowired
-    public RemotePointService(ObjectMapper objectMapper, GameService gameService) {
+    private GameService gameService;
+
+
+    public RemotePointService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.gameService = gameService;
     }
 
     public void registerUser(@NotNull User user, @NotNull WebSocketSession webSocketSession) {
@@ -51,19 +53,30 @@ public class RemotePointService {
         }
     }
 
-    public void sendMessageToUser(@NotNull Long userId, @NotNull Message message) throws IOException {
-        final WebSocketSession webSocketSession = sessions.get(userId);
+    public void sendMessage(@NotNull Message msg) throws IOException {
+        final WebSocketSession webSocketSession = sessions.get(msg.getAddresserId());
         if (webSocketSession == null) {
-            throw new IOException("No game websocket for user " + userId);
+            throw new IOException("No game websocket for user " + msg.getAddresserId());
         }
         if (!webSocketSession.isOpen()) {
             throw new IOException("Session is closed or not exsists");
         }
         //noinspection OverlyBroadCatchBlock
         try {
-            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg)));
         } catch (IOException e) {
             throw new IOException("Unnable to send message", e);
         }
+    }
+
+    public void reset() {
+        final Collection<WebSocketSession> webSocketSessions = sessions.values();
+        for (WebSocketSession session : webSocketSessions) {
+            try {
+                session.close(CloseStatus.SERVER_ERROR);
+            } catch (IOException ignore) {
+            }
+        }
+        sessions.clear();
     }
 }

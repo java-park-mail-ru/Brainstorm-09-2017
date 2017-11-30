@@ -14,4 +14,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(Surrender.class),
         })
 public abstract class Message {
+        // Id пользователя, кому отправляется или от кого пришло сообщение
+        private Long addresserId;
+
+        public Long getAddresserId() {
+                return addresserId;
+        }
+
+        public void setAddresserId(Long addresserId) {
+                this.addresserId = addresserId;
+        }
 }

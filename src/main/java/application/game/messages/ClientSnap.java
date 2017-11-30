@@ -1,9 +1,9 @@
 package application.game.messages;
 
-import application.websocket.ClientMessage;
+import application.websocket.Message;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClientSnap extends ClientMessage {
+public class ClientSnap extends Message {
     @JsonProperty("burstingBubbleId")
     private Long burstingBubbleId;
 
