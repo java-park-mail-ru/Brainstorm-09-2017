@@ -1,11 +1,13 @@
 package application.game.messages;
 
+import application.websocket.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ClientSnapTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -16,7 +18,15 @@ public class ClientSnapTest {
 
     @Test
     public void testDeserialization() throws IOException {
-        final ClientSnap snap = objectMapper.readValue(SNAP_STRING, ClientSnap.class);
-        assertEquals(snap.getBurstingBubbleId(), 42);
+        final Message msg = objectMapper.readValue(SNAP_STRING, Message.class);
+        assertTrue(msg instanceof ClientSnap);
+        assertEquals(((ClientSnap) msg).getBurstingBubbleId(), 42);
+    }
+
+
+    @Test
+    public void testClientSnapSerialization() throws IOException {
+        final ClientSnap snap = new ClientSnap(42L);
+        assertEquals(SNAP_STRING, objectMapper.writeValueAsString(snap));
     }
 }

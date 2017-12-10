@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +42,7 @@ public class GameTest {
 
 
     @Test
-    public void testNewGame() {
+    public void testNewGame() throws IOException {
         game = new GameImpl(firstPlayer, secondPlayer);
         assertTrue(game.hasPlayer(firstPlayer.getUserId()));
         assertTrue(game.hasPlayer(secondPlayer.getUserId()));
@@ -59,7 +60,7 @@ public class GameTest {
 
 
     @Test
-    public void testNewBubbles() {
+    public void testNewBubbles() throws IOException {
         testNewGame();
         game.gmStep();
         final ServerSnap snap = game.getSnapshot(firstPlayer.getUserId());
@@ -69,7 +70,7 @@ public class GameTest {
 
 
     @Test
-    public void testClientBurstBubble() {
+    public void testClientBurstBubble() throws IOException {
         testNewBubbles();
         ServerSnap snap = game.getSnapshot(secondPlayer.getUserId());
         final List<Bubble> bubbles = new ArrayList<>(snap.getBubbles());
@@ -86,7 +87,7 @@ public class GameTest {
 
 
     @Test
-    public void testClientSurrendered() {
+    public void testClientSurrendered() throws IOException {
         testNewGame();
         game.gmStep();
 
