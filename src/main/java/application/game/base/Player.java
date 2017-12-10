@@ -1,6 +1,8 @@
 package application.game.base;
 
 import application.models.User;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,9 @@ public class Player {
     @JsonProperty("isSurrender")
     private @NotNull Boolean isSurrender = false;
 
-    public Player(@NotNull User userProfile) {
+
+    @JsonCreator
+    public Player(@JsonProperty("userProfile") @NotNull User userProfile) {
         this.userProfile = userProfile;
         score = 0L;
     }
@@ -24,6 +28,7 @@ public class Player {
         return userProfile;
     }
 
+    @JsonIgnore
     public @NotNull Long getUserId() {
         return userProfile.getId();
     }
@@ -32,6 +37,7 @@ public class Player {
         return score;
     }
 
+    @JsonProperty("isSurrender")
     public Boolean isSurrender() {
         return isSurrender;
     }
@@ -55,7 +61,7 @@ public class Player {
             return false;
         }
 
-        Player player = (Player) obj;
+        final Player player = (Player) obj;
 
         return userProfile.equals(player.userProfile);
     }

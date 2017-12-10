@@ -25,7 +25,7 @@ public class ClientSnapTest {
 
 
     @Test
-    public void testClientSnapSerialization() throws IOException {
+    public void testSerialization() throws IOException {
         final ClientSnap snap = new ClientSnap(42L);
         assertEquals(SNAP_STRING, objectMapper.writeValueAsString(snap));
     }

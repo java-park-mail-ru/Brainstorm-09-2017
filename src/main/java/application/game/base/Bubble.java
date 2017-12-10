@@ -1,10 +1,12 @@
 package application.game.base;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Bubble {
     @JsonProperty("id")
     private Long id;
@@ -24,11 +26,24 @@ public class Bubble {
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
 
-    public Bubble(@JsonProperty("coords") Coords coords,
+    public Bubble(Coords coords,
+                  Float growthRate,
+                  Float radius,
+                  Float maxRadius) {
+        this.id = ID_GENERATOR.getAndIncrement();
+        this.growthRate = growthRate;
+        this.coords = coords;
+        this.radius = radius;
+        this.maxRadius = maxRadius;
+    }
+
+    @JsonCreator
+    public Bubble(@JsonProperty("id") Long id,
+                  @JsonProperty("coords") Coords coords,
                   @JsonProperty("growthRate") Float growthRate,
                   @JsonProperty("radius") Float radius,
                   @JsonProperty("maxRadius") Float maxRadius) {
-        this.id = ID_GENERATOR.getAndIncrement();
+        this.id = id == null ? ID_GENERATOR.getAndIncrement() : id;
         this.growthRate = growthRate;
         this.coords = coords;
         this.radius = radius;
@@ -42,6 +57,7 @@ public class Bubble {
     }
 
 
+    @JsonProperty("isBurst")
     public Boolean isBurst() {
         return radius > maxRadius;
     }

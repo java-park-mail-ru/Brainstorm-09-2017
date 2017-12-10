@@ -2,6 +2,7 @@ package application.models;
 
 import application.views.ErrorResponse.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +34,10 @@ public class User {
     private Integer theme;
 
     @JsonProperty("created")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private Timestamp created;
     @JsonProperty("updated")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private Timestamp updated;
 
 
@@ -136,12 +139,10 @@ public class User {
         return record;
     }
 
-    @JsonIgnore
     public Timestamp getCreated() {
         return created;
     }
 
-    @JsonIgnore
     public Timestamp getUpdated() {
         return updated;
     }
@@ -176,16 +177,6 @@ public class User {
 
     public void setLocalRecord(Long localRecord) {
         this.localRecord = localRecord;
-    }
-
-    @JsonProperty("created")
-    public @Nullable String getCreatedAsString() {
-        return created == null ? null : created.toString();
-    }
-
-    @JsonProperty("updated")
-    public @Nullable String getUpdatedAsString() {
-        return updated == null ? null : updated.toString();
     }
 
 
