@@ -7,6 +7,7 @@ import application.websocket.Letter;
 import application.websocket.Message;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -24,7 +25,7 @@ public class GameImpl implements Game {
     private static final Long BLISTARING_PERIOD = 500L;
 
 
-    public GameImpl(Player firstPlayer, Player secondPlayer) {
+    public GameImpl(Player firstPlayer, Player secondPlayer) throws IOException {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.bubbleFactory = new BubbleFactory(BLISTARING_PERIOD);

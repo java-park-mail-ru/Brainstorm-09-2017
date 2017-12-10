@@ -1,5 +1,5 @@
 {
   "growthRate": 0.2,
-  "radius": 0.4,
+  "startRadius": 0.4,
   "maxRadius": 4
 }

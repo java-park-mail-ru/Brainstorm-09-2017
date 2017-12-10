@@ -96,7 +96,7 @@ public class GameService {
                 } catch (InterruptedException e) {
                     LOGGER.error("Mechanics thread was interrupted", e);
                 }
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 LOGGER.error("Mechanics executor was reseted due to exception", e);
                 remotePointService.reset();
                 games.clear();
@@ -106,7 +106,7 @@ public class GameService {
     }
 
 
-    private void startNewGames() {
+    private void startNewGames() throws IOException {
         while (playersQueue.size() >= 2) {
             final Player firstPlayer = playersQueue.remove();
             final Player secondPlayer = playersQueue.remove();
