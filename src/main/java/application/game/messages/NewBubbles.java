@@ -2,6 +2,7 @@ package application.game.messages;
 
 import application.game.base.Bubble;
 import application.websocket.Message;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -11,7 +12,8 @@ public class NewBubbles extends Message {
     @JsonProperty("bubbles")
     private Collection<Bubble> bubbles;
 
-    public NewBubbles(Collection<Bubble> bubbles) {
+    @JsonCreator
+    public NewBubbles(@JsonProperty("bubbles") Collection<Bubble> bubbles) {
         this.bubbles = bubbles;
     }
 
