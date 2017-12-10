@@ -1,8 +1,11 @@
 package application.game.messages;
 
 import application.websocket.Message;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,21 +17,25 @@ public class BurstingBubbles extends Message {
     private Long enemyScore;
 
     @JsonProperty("burstingBubbleIds")
-    private List<BurstingBubble> burstingBubbles;
+    private List<BurstingBubbleId> burstingBubbles;
 
 
-    public static class BurstingBubble {
+    public static class BurstingBubbleId {
         @JsonProperty("userId")
         private Long userId;
         @JsonProperty("burstingBubbleId")
         private Long burstingBubbleId;
 
-        BurstingBubble(Long userId, Long burstingBubbleId) {
+
+        @JsonCreator
+        BurstingBubbleId(@JsonProperty("userId") Long userId,
+                         @JsonProperty("burstingBubbleId") Long burstingBubbleId) {
             this.userId = userId;
             this.burstingBubbleId = burstingBubbleId;
         }
 
-        BurstingBubble(ClientSnap clientSnap) {
+
+        BurstingBubbleId(ClientSnap clientSnap) {
             this.burstingBubbleId = clientSnap.getBurstingBubbleId();
         }
 
@@ -39,17 +46,54 @@ public class BurstingBubbles extends Message {
         public Long getBurstingBubbleId() {
             return burstingBubbleId;
         }
+
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+
+            final BurstingBubbleId that = (BurstingBubbleId) obj;
+
+            if (userId != null ? !userId.equals(that.userId) : that.userId != null) {
+                return false;
+            }
+            return burstingBubbleId != null ? burstingBubbleId.equals(that.burstingBubbleId) : that.burstingBubbleId == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = userId != null ? userId.hashCode() : 0;
+            final int hashConst = 31;
+            result = hashConst * result + (burstingBubbleId != null ? burstingBubbleId.hashCode() : 0);
+            return result;
+        }
     }
 
 
-    public BurstingBubbles(Long currentPlayerScore, Long enemyScore, List<ClientSnap> clientSnaps) {
+    @JsonCreator
+    public BurstingBubbles(@JsonProperty("currentPlayerScore") Long currentPlayerScore,
+                           @JsonProperty("enemyScore") Long enemyScore,
+                           @JsonProperty("burstingBubbleIds") Collection<BurstingBubbleId> burstingBubbles) {
         this.currentPlayerScore = currentPlayerScore;
         this.enemyScore = enemyScore;
-        this.burstingBubbles = clientSnaps.stream().map(BurstingBubble::new).collect(Collectors.toList());
+        this.burstingBubbles = new ArrayList<>(burstingBubbles);
+    }
+
+    public BurstingBubbles(Long currentPlayerScore,
+                           Long enemyScore,
+                           List<ClientSnap> clientSnaps) {
+        this.currentPlayerScore = currentPlayerScore;
+        this.enemyScore = enemyScore;
+        this.burstingBubbles = clientSnaps.stream().map(BurstingBubbleId::new).collect(Collectors.toList());
     }
 
 
-    public List<BurstingBubble> getBurstingBubbles() {
+    public List<BurstingBubbleId> getBurstingBubbles() {
         return burstingBubbles;
     }
 
