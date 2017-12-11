@@ -1,6 +1,7 @@
-package application.servicies;
+package application.controllers;
 
 import application.models.User;
+import application.servicies.UsersService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -31,21 +37,29 @@ public class UsersControllerTest {
     private UsersService usersService;
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    private TransactionStatus transaction;
+
     private User existingUser;
 
 
     @Before
     public void setup() {
+        transaction = transactionManager.getTransaction(
+                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
+        );
+
         usersService.create(new User("ExistingUser", "password", "existing-user@mail.ru"));
         existingUser = usersService.findUserByLogin("ExistingUser");
         assertNotNull(existingUser);
         existingUser.setPassword("password");
     }
 
-
     @After
     public void after() {
-        usersService.clearDB();
+        transactionManager.rollback(transaction);
     }
 
 
@@ -55,6 +69,7 @@ public class UsersControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"login\":\"login\", \"password\":\"password\", \"email\":\"user@mail.ru\"}"))
                 .andExpect(status().isOk());
+
     }
 
 

@@ -172,9 +172,6 @@
         <module name="SingleLineJavadoc">
             <property name="ignoreInlineTags" value="false"/>
         </module>
-        <module name="EmptyCatchBlock">
-            <property name="exceptionVariableName" value="expected"/>
-        </module>
         <module name="CommentsIndentation"/>
 
         <!-- Checks for Naming Conventions.                  -->
@@ -251,7 +248,6 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <module name="TodoComment"/>
         <module name="UpperEll"/>
 
     </module>

@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class UsersService {
     );
 
 
-    public List create(User credentials) {
+    public List<ErrorResponse> create(User credentials) {
         final List<ErrorCode> errors = new ArrayList<>();
         credentials.emailValidator().ifPresent(errors::add);
         credentials.loginValidator().ifPresent(errors::add);
@@ -80,15 +81,14 @@ public class UsersService {
         try {
             template.update("INSERT INTO person(login, password, email)"
                     + " VALUES (:login,:password,:email) RETURNING id", params, keyHolder);
-            return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+            return Collections.EMPTY_LIST;
         } catch (DuplicateKeyException e) {
             return new ErrorResponse(ErrorCode.USER_DUPLICATE).toList();
         }
     }
 
 
-    public List update(Long id, User credentials) {
-        // Проверяю, что есть что-то на изменение
+    public List<ErrorResponse> update(Long id, User credentials) {
         if (credentials.getEmail() == null && credentials.getPassword() == null) {
             return new ErrorResponse(ErrorCode.NOTHING_TO_CHANGE).toList();
         }
@@ -114,12 +114,12 @@ public class UsersService {
             params.addValue("password", hashpw(credentials.getPassword()));
             values.append("password = :password, ");
         }
-        final Integer count = template.update("UPDATE person SET " + values + "updated = now() WHERE id=:id", params);
+        final Integer count = template.update("UPDATE person SET " + values + " updated = now() WHERE id=:id", params);
 
         if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
-        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+        return Collections.EMPTY_LIST;
     }
 
 
@@ -155,9 +155,8 @@ public class UsersService {
 
 
     public List<RecordResponse> getRecords() {
-        // FIXME: local_record заменить на record
         return template.query(
-                "SELECT login, number_of_games, local_record record FROM person WHERE local_record > 0 "
+                "SELECT login, number_of_games, record FROM person WHERE record > 0 "
                 + "ORDER BY record DESC, number_of_games LIMIT " + topRecordsCount, RECORD_MAPPER
         );
     }
@@ -172,7 +171,7 @@ public class UsersService {
         if (count == 0) {
             return new ErrorResponse(ErrorCode.USER_NOT_FOUND).toList();
         }
-        return Collections.EMPTY_LIST;          // Возвращаяю пустой список ошибок
+        return Collections.EMPTY_LIST;
     }
 
 
@@ -182,6 +181,17 @@ public class UsersService {
         params.addValue("local_record", body.getLocalRecord());
         template.update("UPDATE person SET local_record = :local_record "
                 + "WHERE id = :id AND local_record < :local_record ", params);
+    }
+
+
+    public void record(Long id, Long record) {
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        params.addValue("record", record);
+        template.update("UPDATE person "
+                + "SET record = CASE WHEN record < :record THEN :record ELSE record END, "
+                + " number_of_games = number_of_games + 1 "
+                + "WHERE id = :id ", params);
     }
 
 
@@ -195,13 +205,13 @@ public class UsersService {
     }
 
 
-    void clearDB() {
-        template.update("TRUNCATE TABLE person CASCADE", new MapSqlParameterSource());
-    }
-
-
     public @Nullable User auth(HttpSession httpSession) {
         final Long userId = (Long) httpSession.getAttribute("userId");
+        return findUserById(userId);
+    }
+
+    public @Nullable User auth(WebSocketSession webSocketSession) {
+        final Long userId = (Long) webSocketSession.getAttributes().get("userId");
         return findUserById(userId);
     }
 }
