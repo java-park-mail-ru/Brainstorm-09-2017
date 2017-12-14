@@ -1,10 +1,8 @@
-CREATE EXTENSION IF NOT EXISTS citext;
-
 CREATE TABLE person (
   id SERIAL PRIMARY KEY,
-  login CITEXT COLLATE "en_US.utf8" NOT NULL UNIQUE,
+  login TEXT COLLATE "ucs_basic" NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  email CITEXT COLLATE "en_US.utf8" NOT NULL,
+  email TEXT COLLATE "ucs_basic" NOT NULL,
   number_of_games INTEGER NOT NULL DEFAULT 0 CHECK (number_of_games >= 0),
   record INTEGER NOT NULL DEFAULT 0 CHECK (record >= 0),
   local_record INTEGER NOT NULL DEFAULT 0 CHECK (record >= 0),
@@ -13,4 +11,4 @@ CREATE TABLE person (
   updated TIMESTAMP NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_person_login ON person (login);
+CREATE UNIQUE INDEX idx_person_email ON person (LOWER(email));
