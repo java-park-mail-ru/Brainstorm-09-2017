@@ -13,7 +13,15 @@ import javax.servlet.http.HttpSession;
 
 
 @RestController
-@CrossOrigin(origins = {"https://bubblerise-front.herokuapp.com", "https://bubblerise.herokuapp.com", "https://brainst0rm.herokuapp.com"})
+@CrossOrigin(origins = {
+        "https://bubblerise-front.herokuapp.com",
+        "https://bubblerise.herokuapp.com",
+        "https://brainst0rm.herokuapp.com",
+        "https://bubblerise.xyz",
+        "http://bubblerise.xyz",
+        "https://localhost",
+        "http://localhost",
+})
 @RequestMapping(path = "/api/game")
 public class GameController {
     private UsersService usersService;

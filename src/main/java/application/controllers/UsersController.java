@@ -15,8 +15,15 @@ import java.util.List;
 
 
 @RestController
-@CrossOrigin
-//@CrossOrigin(origins = {"https://bubblerise-front.herokuapp.com", "https://bubblerise.herokuapp.com", "https://brainst0rm.herokuapp.com"})
+@CrossOrigin(origins = {
+        "https://bubblerise-front.herokuapp.com",
+        "https://bubblerise.herokuapp.com",
+        "https://brainst0rm.herokuapp.com",
+        "https://bubblerise.xyz",
+        "http://bubblerise.xyz",
+        "https://localhost",
+        "http://localhost",
+})
 @RequestMapping(path = "/api/users")
 public class UsersController {
     private UsersService usersService;
